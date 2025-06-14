@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>群体化学 - SwarmChemistry 云端版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            align-items: start;
+        }
+        
+        .canvas-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .controls-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            height: fit-content;
+            max-height: 850px;
+            overflow-y: auto;
+        }
+        
+        canvas {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            background: #000;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .canvas-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .control-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .control-group h3 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+        
+        button:hover {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .population-display {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 11px;
+            max-height: 250px;
+            overflow-y: auto;
+            margin-top: 10px;
+            white-space: pre-line;
+            border: 1px solid rgba(255,255,255,0.1);
+            line-height: 1.4;
+        }
+        
+        /* 网络同步样式 */
+        .sync-button {
+            background: linear-gradient(145deg, #4CAF50, #45a049) !important;
+            border-color: #4CAF50 !important;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 12px 24px;
+        }
+        
+        .sync-button:hover {
+            background: linear-gradient(145deg, #5CBF60, #4CAF50) !important;
+        }
+        
+        .sync-status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .sync-status.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #4CAF50;
+        }
+        
+        .sync-status.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #f44336;
+        }
+        
+        .sync-status.info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.5);
+            color: #2196F3;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .controls-section {
+                max-height: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .preset-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            canvas {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐝 群体化学 - SwarmChemistry</h1>
+            <p>🌐 云端版 - 创作粒子行为，同步到Unity体验</p>
+        </div>
+        
+        <div class="main-layout">
+            <div class="canvas-section">
+                <canvas id="swarmCanvas" width="800" height="600"></canvas>
+                <div class="canvas-controls">
+                    <button onclick="startSimulation()">▶️ 开始</button>
+                    <button onclick="pauseSimulation()">⏸️ 暂停</button>
+                    <button onclick="clearCanvas()">🗑️ 清空</button>
+                    <button onclick="resetView()">🔄 重置视图</button>
+                </div>
+            </div>
+            
+            <div class="controls-section">
+                <div class="control-group">
+                    <h3>🎯 经典预设</h3>
+                    <div class="preset-buttons">
+                        <button onclick="loadPreset('schooling')">🐟 鱼群游泳</button>
+                        <button onclick="loadPreset('flocking')">🦅 鸟群飞行</button>
+                        <button onclick="loadPreset('swarming')">🐝 蜂群聚集</button>
+                        <button onclick="loadPreset('herding')">🐑 羊群放牧</button>
+                        <button onclick="loadPreset('hunting')">🐺 狼群狩猎</button>
+                        <button onclick="loadPreset('migration')">🦋 蝴蝶迁徙</button>
+                        <button onclick="loadPreset('dancing')">💃 群体舞蹈</button>
+                        <button onclick="loadPreset('spiral')">🌀 螺旋运动</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3>🔬 复杂行为</h3>
+                    <div class="preset-buttons">
+                        <button onclick="loadPreset('ecosystem')">🌿 生态系统</button>
+                        <button onclick="loadPreset('competition')">⚔️ 竞争模式</button>
+                        <button onclick="loadPreset('cooperation')">🤝 合作模式</button>
+                        <button onclick="loadPreset('chaos')">🌪️ 混沌系统</button>
+                        <button onclick="loadPreset('emergence')">✨ 涌现行为</button>
+                        <button onclick="loadPreset('phase_transition')">🔄 相变现象</button>
+                        <button onclick="loadPreset('collective_intelligence')">🧠 集体智能</button>
+                        <button onclick="loadPreset('self_organization')">🏗️ 自组织</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3>🎨 艺术效果</h3>
+                    <div class="preset-buttons">
+                        <button onclick="loadPreset('galaxy')">🌌 星系旋转</button>
+                        <button onclick="loadPreset('fireworks')">🎆 烟花绽放</button>
+                        <button onclick="loadPreset('aurora')">🌈 极光舞动</button>
+                        <button onclick="loadPreset('mandala')">🕸️ 曼陀罗</button>
+                        <button onclick="loadPreset('fractal')">🔺 分形图案</button>
+                        <button onclick="loadPreset('wave')">🌊 波浪效果</button>
+                        <button onclick="loadPreset('crystal')">💎 晶体生长</button>
+                        <button onclick="loadPreset('plasma')">⚡ 等离子体</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3>🚀 同步到Unity</h3>
+                    <button class="sync-button" onclick="syncToUnity()">🚀 同步到Unity</button>
+                    <div id="syncStatus" class="sync-status" style="display: none;"></div>
+                </div>
+                
+                <div class="control-group">
+                    <h3>📊 当前种群</h3>
+                    <div id="populationDisplay" class="population-display">
+                        点击预设按钮来生成粒子种群...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let canvas, ctx;
+        let populations = [];
+        let animationId;
+        let isRunning = false;
+        
+        // 同步配置 - 使用当前域名
+        const SYNC_CONFIG = {
+            serverUrl: window.location.origin + '/api',
+            enabled: true
+        };
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            canvas = document.getElementById('swarmCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // 设置高DPI支持
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+            
+            console.log('🎮 SwarmChemistry 云端版初始化完成');
+            console.log('🌐 服务器地址:', SYNC_CONFIG.serverUrl);
+        });
+        
+        // 预设配置
+        const presets = {
+            schooling: [
+                { count: 80, params: [120, 8, 15, 0.8, 0.6, 0.4, 0.1, 0.7] },
+                { count: 60, params: [100, 6, 12, 0.7, 0.5, 0.5, 0.2, 0.6] }
+            ],
+            flocking: [
+                { count: 100, params: [150, 10, 20, 0.6, 0.8, 0.3, 0.15, 0.8] },
+                { count: 50, params: [180, 12, 25, 0.5, 0.9, 0.2, 0.1, 0.9] }
+            ],
+            swarming: [
+                { count: 120, params: [80, 5, 12, 0.9, 0.4, 0.6, 0.3, 0.5] },
+                { count: 80, params: [60, 4, 10, 0.8, 0.3, 0.7, 0.4, 0.4] }
+            ],
+            herding: [
+                { count: 90, params: [200, 15, 30, 0.7, 0.7, 0.2, 0.05, 0.8] },
+                { count: 40, params: [250, 18, 35, 0.6, 0.8, 0.1, 0.03, 0.9] }
+            ],
+            hunting: [
+                { count: 30, params: [300, 20, 40, 0.5, 0.9, 0.1, 0.2, 0.95] },
+                { count: 150, params: [80, 8, 15, 0.8, 0.3, 0.8, 0.4, 0.6] }
+            ],
+            migration: [
+                { count: 200, params: [100, 12, 25, 0.4, 0.9, 0.1, 0.05, 0.85] }
+            ],
+            dancing: [
+                { count: 60, params: [120, 8, 20, 0.6, 0.4, 0.3, 0.8, 0.7] },
+                { count: 40, params: [100, 10, 18, 0.7, 0.3, 0.4, 0.9, 0.6] },
+                { count: 30, params: [80, 6, 15, 0.8, 0.2, 0.5, 0.7, 0.5] }
+            ],
+            spiral: [
+                { count: 100, params: [150, 10, 20, 0.3, 0.2, 0.1, 0.9, 0.8] },
+                { count: 80, params: [120, 8, 16, 0.4, 0.3, 0.2, 0.8, 0.7] }
+            ],
+            ecosystem: [
+                { count: 80, params: [100, 8, 15, 0.7, 0.6, 0.4, 0.2, 0.7] },
+                { count: 60, params: [150, 12, 20, 0.5, 0.8, 0.2, 0.1, 0.8] },
+                { count: 40, params: [200, 15, 25, 0.6, 0.7, 0.3, 0.15, 0.75] },
+                { count: 30, params: [80, 6, 12, 0.9, 0.4, 0.6, 0.3, 0.6] }
+            ],
+            competition: [
+                { count: 70, params: [120, 10, 18, 0.8, 0.3, 0.7, 0.4, 0.6] },
+                { count: 70, params: [130, 11, 19, 0.7, 0.4, 0.8, 0.3, 0.7] },
+                { count: 60, params: [110, 9, 17, 0.9, 0.2, 0.6, 0.5, 0.5] }
+            ],
+            cooperation: [
+                { count: 100, params: [180, 12, 22, 0.6, 0.8, 0.2, 0.1, 0.85] },
+                { count: 80, params: [160, 10, 20, 0.7, 0.7, 0.3, 0.15, 0.8] }
+            ],
+            chaos: [
+                { count: 50, params: [80, 15, 30, 0.3, 0.2, 0.1, 0.9, 0.4] },
+                { count: 60, params: [100, 18, 35, 0.2, 0.3, 0.2, 0.8, 0.3] },
+                { count: 70, params: [120, 20, 40, 0.4, 0.1, 0.3, 0.7, 0.5] },
+                { count: 40, params: [60, 12, 25, 0.1, 0.4, 0.1, 0.95, 0.2] }
+            ],
+            emergence: [
+                { count: 150, params: [100, 8, 16, 0.5, 0.5, 0.3, 0.4, 0.6] },
+                { count: 100, params: [120, 10, 18, 0.6, 0.4, 0.4, 0.3, 0.7] },
+                { count: 50, params: [80, 6, 14, 0.7, 0.6, 0.2, 0.5, 0.5] }
+            ],
+            phase_transition: [
+                { count: 120, params: [150, 5, 10, 0.9, 0.8, 0.1, 0.05, 0.3] },
+                { count: 80, params: [200, 15, 30, 0.3, 0.2, 0.8, 0.6, 0.9] }
+            ],
+            collective_intelligence: [
+                { count: 200, params: [120, 8, 16, 0.6, 0.7, 0.3, 0.2, 0.75] },
+                { count: 100, params: [100, 10, 18, 0.7, 0.6, 0.4, 0.25, 0.7] },
+                { count: 50, params: [80, 6, 14, 0.8, 0.5, 0.5, 0.3, 0.65] }
+            ],
+            self_organization: [
+                { count: 100, params: [100, 8, 16, 0.5, 0.6, 0.4, 0.3, 0.7] },
+                { count: 80, params: [120, 10, 18, 0.6, 0.5, 0.5, 0.25, 0.75] },
+                { count: 60, params: [80, 6, 14, 0.7, 0.4, 0.6, 0.35, 0.65] },
+                { count: 40, params: [60, 4, 12, 0.8, 0.3, 0.7, 0.4, 0.6] }
+            ],
+            galaxy: [
+                { count: 150, params: [200, 5, 15, 0.2, 0.1, 0.05, 0.8, 0.9] },
+                { count: 100, params: [180, 8, 18, 0.3, 0.2, 0.1, 0.7, 0.85] },
+                { count: 50, params: [160, 12, 22, 0.4, 0.3, 0.15, 0.6, 0.8] }
+            ],
+            fireworks: [
+                { count: 80, params: [50, 20, 40, 0.1, 0.05, 0.02, 0.95, 0.3] },
+                { count: 60, params: [60, 18, 35, 0.15, 0.1, 0.05, 0.9, 0.4] },
+                { count: 40, params: [70, 15, 30, 0.2, 0.15, 0.1, 0.85, 0.5] }
+            ],
+            aurora: [
+                { count: 120, params: [300, 3, 8, 0.6, 0.9, 0.05, 0.4, 0.95] },
+                { count: 100, params: [280, 4, 10, 0.5, 0.8, 0.1, 0.5, 0.9] },
+                { count: 80, params: [250, 5, 12, 0.7, 0.7, 0.15, 0.3, 0.85] }
+            ],
+            mandala: [
+                { count: 60, params: [120, 6, 12, 0.8, 0.2, 0.3, 0.6, 0.4] },
+                { count: 80, params: [100, 8, 16, 0.7, 0.3, 0.4, 0.5, 0.5] },
+                { count: 100, params: [80, 10, 20, 0.6, 0.4, 0.5, 0.4, 0.6] },
+                { count: 40, params: [60, 4, 8, 0.9, 0.1, 0.2, 0.7, 0.3] }
+            ],
+            fractal: [
+                { count: 100, params: [80, 6, 12, 0.5, 0.3, 0.2, 0.8, 0.4] },
+                { count: 80, params: [100, 8, 16, 0.4, 0.4, 0.3, 0.7, 0.5] },
+                { count: 60, params: [120, 10, 20, 0.3, 0.5, 0.4, 0.6, 0.6] },
+                { count: 40, params: [60, 4, 8, 0.6, 0.2, 0.1, 0.9, 0.3] }
+            ],
+            wave: [
+                { count: 150, params: [200, 8, 16, 0.3, 0.8, 0.1, 0.6, 0.85] },
+                { count: 100, params: [180, 10, 18, 0.4, 0.7, 0.2, 0.5, 0.8] }
+            ],
+            crystal: [
+                { count: 80, params: [60, 2, 6, 0.9, 0.8, 0.7, 0.1, 0.2] },
+                { count: 60, params: [80, 3, 8, 0.8, 0.7, 0.6, 0.2, 0.3] },
+                { count: 40, params: [100, 4, 10, 0.7, 0.6, 0.5, 0.3, 0.4] }
+            ],
+            plasma: [
+                { count: 200, params: [150, 12, 25, 0.2, 0.1, 0.05, 0.9, 0.8] },
+                { count: 150, params: [120, 15, 30, 0.3, 0.2, 0.1, 0.8, 0.7] },
+                { count: 100, params: [100, 18, 35, 0.4, 0.3, 0.15, 0.7, 0.6] }
+            ]
+        };
+        
+        // 加载预设
+        function loadPreset(presetName) {
+            if (!presets[presetName]) {
+                console.error('未找到预设:', presetName);
+                return;
+            }
+            
+            populations = [];
+            const presetData = presets[presetName];
+            
+            presetData.forEach((pop, index) => {
+                const population = {
+                    count: pop.count,
+                    parameters: {
+                        neighborhoodRadius: pop.params[0],
+                        normalSpeed: pop.params[1],
+                        maxSpeed: pop.params[2],
+                        c1: pop.params[3],
+                        c2: pop.params[4],
+                        c3: pop.params[5],
+                        c4: pop.params[6],
+                        c5: pop.params[7],
+                        color: generateRandomColor()
+                    },
+                    individuals: []
+                };
+                
+                // 生成个体
+                for (let i = 0; i < pop.count; i++) {
+                    population.individuals.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 4,
+                        vy: (Math.random() - 0.5) * 4,
+                        color: population.parameters.color
+                    });
+                }
+                
+                populations.push(population);
+            });
+            
+            updatePopulationDisplay();
+            
+            if (isRunning) {
+                startSimulation();
+            }
+            
+            console.log(`🎯 加载预设: ${presetName}, 种群数: ${populations.length}`);
+        }
+        
+        // 生成随机颜色
+        function generateRandomColor() {
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = Math.floor(Math.random() * 40) + 60;
+            const lightness = Math.floor(Math.random() * 30) + 50;
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+        
+        // 更新种群显示
+        function updatePopulationDisplay() {
+            const display = document.getElementById('populationDisplay');
+            if (populations.length === 0) {
+                display.textContent = '点击预设按钮来生成粒子种群...';
+                return;
+            }
+            
+            let text = `总种群数: ${populations.length}\n`;
+            text += `总粒子数: ${populations.reduce((sum, pop) => sum + pop.count, 0)}\n\n`;
+            
+            populations.forEach((pop, index) => {
+                const params = pop.parameters;
+                text += `种群 ${index + 1}: ${pop.count} 个粒子\n`;
+                text += `  邻域半径: ${params.neighborhoodRadius.toFixed(1)}\n`;
+                text += `  正常速度: ${params.normalSpeed.toFixed(1)}\n`;
+                text += `  最大速度: ${params.maxSpeed.toFixed(1)}\n`;
+                text += `  聚集力: ${params.c1.toFixed(2)}\n`;
+                text += `  对齐力: ${params.c2.toFixed(2)}\n`;
+                text += `  分离力: ${params.c3.toFixed(2)}\n`;
+                text += `  随机性: ${params.c4.toFixed(2)}\n`;
+                text += `  速度调节: ${params.c5.toFixed(2)}\n\n`;
+            });
+            
+            display.textContent = text;
+        }
+        
+        // 开始模拟
+        function startSimulation() {
+            if (populations.length === 0) {
+                alert('请先选择一个预设！');
+                return;
+            }
+            
+            isRunning = true;
+            animate();
+        }
+        
+        // 暂停模拟
+        function pauseSimulation() {
+            isRunning = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+        }
+        
+        // 清空画布
+        function clearCanvas() {
+            pauseSimulation();
+            populations = [];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updatePopulationDisplay();
+        }
+        
+        // 重置视图
+        function resetView() {
+            if (populations.length > 0) {
+                populations.forEach(pop => {
+                    pop.individuals.forEach(individual => {
+                        individual.x = Math.random() * canvas.width;
+                        individual.y = Math.random() * canvas.height;
+                        individual.vx = (Math.random() - 0.5) * 4;
+                        individual.vy = (Math.random() - 0.5) * 4;
+                    });
+                });
+            }
+        }
+        
+        // 动画循环
+        function animate() {
+            if (!isRunning) return;
+            
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            populations.forEach(population => {
+                updatePopulation(population);
+                drawPopulation(population);
+            });
+            
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        // 更新种群
+        function updatePopulation(population) {
+            const params = population.parameters;
+            
+            population.individuals.forEach(individual => {
+                let fx = 0, fy = 0;
+                let neighbors = 0;
+                let avgVx = 0, avgVy = 0;
+                let avgX = 0, avgY = 0;
+                let sepX = 0, sepY = 0;
+                
+                // 计算邻居影响
+                population.individuals.forEach(other => {
+                    if (other === individual) return;
+                    
+                    const dx = other.x - individual.x;
+                    const dy = other.y - individual.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < params.neighborhoodRadius && dist > 0) {
+                        neighbors++;
+                        avgVx += other.vx;
+                        avgVy += other.vy;
+                        avgX += other.x;
+                        avgY += other.y;
+                        
+                        // 分离力
+                        const sepForce = params.c3 / (dist * dist);
+                        sepX -= dx * sepForce;
+                        sepY -= dy * sepForce;
+                    }
+                });
+                
+                if (neighbors > 0) {
+                    // 对齐力
+                    avgVx /= neighbors;
+                    avgVy /= neighbors;
+                    fx += (avgVx - individual.vx) * params.c2;
+                    fy += (avgVy - individual.vy) * params.c2;
+                    
+                    // 聚集力
+                    avgX /= neighbors;
+                    avgY /= neighbors;
+                    fx += (avgX - individual.x) * params.c1 * 0.01;
+                    fy += (avgY - individual.y) * params.c1 * 0.01;
+                }
+                
+                // 分离力
+                fx += sepX;
+                fy += sepY;
+                
+                // 随机力
+                fx += (Math.random() - 0.5) * params.c4 * 2;
+                fy += (Math.random() - 0.5) * params.c4 * 2;
+                
+                // 更新速度
+                individual.vx += fx * 0.1;
+                individual.vy += fy * 0.1;
+                
+                // 速度限制
+                const speed = Math.sqrt(individual.vx * individual.vx + individual.vy * individual.vy);
+                if (speed > params.maxSpeed) {
+                    individual.vx = (individual.vx / speed) * params.maxSpeed;
+                    individual.vy = (individual.vy / speed) * params.maxSpeed;
+                }
+                
+                // 更新位置
+                individual.x += individual.vx;
+                individual.y += individual.vy;
+                
+                // 边界处理
+                if (individual.x < 0) individual.x = canvas.width;
+                if (individual.x > canvas.width) individual.x = 0;
+                if (individual.y < 0) individual.y = canvas.height;
+                if (individual.y > canvas.height) individual.y = 0;
+            });
+        }
+        
+        // 绘制种群
+        function drawPopulation(population) {
+            ctx.fillStyle = population.parameters.color;
+            
+            population.individuals.forEach(individual => {
+                ctx.beginPath();
+                ctx.arc(individual.x, individual.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+        
+        // 同步到Unity
+        async function syncToUnity() {
+            if (populations.length === 0) {
+                showSyncStatus('请先选择一个预设！', 'error');
+                return;
+            }
+            
+            showSyncStatus('🚀 正在同步到Unity...', 'info');
+            
+            try {
+                const swarmData = {
+                    sessionId: 'web_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    timestamp: new Date().toISOString(),
+                    populations: populations.map(pop => ({
+                        count: pop.count,
+                        parameters: pop.parameters
+                    })),
+                    totalIndividuals: populations.reduce((sum, pop) => sum + pop.count, 0),
+                    userAgent: navigator.userAgent,
+                    source: 'SwarmChemistry Web Cloud'
+                };
+                
+                console.log('📤 发送数据到服务器:', swarmData);
+                
+                const response = await fetch(SYNC_CONFIG.serverUrl + '/swarm-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(swarmData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSyncStatus(`✅ 同步成功！数据ID: ${result.dataId}`, 'success');
+                    console.log('✅ 同步成功:', result);
+                } else {
+                    throw new Error(result.message || '同步失败');
+                }
+                
+            } catch (error) {
+                console.error('❌ 同步失败:', error);
+                showSyncStatus(`❌ 同步失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 显示同步状态
+        function showSyncStatus(message, type) {
+            const statusDiv = document.getElementById('syncStatus');
+            statusDiv.textContent = message;
+            statusDiv.className = `sync-status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        console.log('🌐 SwarmChemistry 云端版加载完成');
+        console.log('🔗 API端点:', SYNC_CONFIG.serverUrl);
+    </script>
+</body>
+</html> 
