@@ -190,6 +190,67 @@
             color: #2196F3;
         }
         
+        /* 参数输入样式 */
+        .parameter-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            resize: vertical;
+            backdrop-filter: blur(10px);
+        }
+        
+        .parameter-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .parameter-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        
+        .parameter-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .parse-status {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .parse-status.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #4CAF50;
+        }
+        
+        .parse-status.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #f44336;
+        }
+        
+        .parse-status.info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.5);
+            color: #2196F3;
+        }
+        
         /* 响应式设计 */
         @media (max-width: 1200px) {
             .main-layout {
@@ -241,6 +302,20 @@
             </div>
             
             <div class="controls-section">
+                <div class="control-group">
+                    <h3>📝 自定义参数</h3>
+                    <textarea id="parameterInput" class="parameter-input" placeholder="输入参数格式，例如：
+48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)
+152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)
+14 * (248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68)
+31 * (141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2)"></textarea>
+                    <div class="parameter-controls">
+                        <button onclick="parseCustomParameters()">🔍 解析参数</button>
+                        <button onclick="clearParameters()">🗑️ 清空输入</button>
+                    </div>
+                    <div id="parseStatus" class="parse-status" style="display: none;"></div>
+                </div>
+                
                 <div class="control-group">
                     <h3>🎯 经典预设</h3>
                     <div class="preset-buttons">
@@ -739,8 +814,114 @@
             }
         }
         
+        // 解析自定义参数
+        function parseCustomParameters() {
+            const input = document.getElementById('parameterInput').value.trim();
+            
+            if (!input) {
+                showParseStatus('请输入参数！', 'error');
+                return;
+            }
+            
+            showParseStatus('🔍 正在解析参数...', 'info');
+            
+            try {
+                const lines = input.split('\n').filter(line => line.trim());
+                const newPopulations = [];
+                let totalParsed = 0;
+                
+                lines.forEach((line, index) => {
+                    // 匹配格式: count * (param1, param2, param3, param4, param5, param6, param7, param8)
+                    const match = line.trim().match(/(\d+)\s*\*\s*\(([^)]+)\)/);
+                    
+                    if (match) {
+                        const count = parseInt(match[1]);
+                        const params = match[2].split(',').map(p => parseFloat(p.trim()));
+                        
+                        if (params.length === 8 && params.every(p => !isNaN(p))) {
+                            const population = {
+                                count: count,
+                                parameters: {
+                                    neighborhoodRadius: params[0],
+                                    normalSpeed: params[1],
+                                    maxSpeed: params[2],
+                                    c1: params[3],
+                                    c2: params[4],
+                                    c3: params[5],
+                                    c4: params[6],
+                                    c5: params[7],
+                                    color: generateRandomColor()
+                                },
+                                individuals: []
+                            };
+                            
+                            // 生成个体
+                            for (let i = 0; i < count; i++) {
+                                population.individuals.push({
+                                    x: Math.random() * canvas.width,
+                                    y: Math.random() * canvas.height,
+                                    vx: (Math.random() - 0.5) * 4,
+                                    vy: (Math.random() - 0.5) * 4,
+                                    color: population.parameters.color
+                                });
+                            }
+                            
+                            newPopulations.push(population);
+                            totalParsed += count;
+                        } else {
+                            throw new Error(`第 ${index + 1} 行参数格式错误：需要8个数值参数`);
+                        }
+                    } else {
+                        throw new Error(`第 ${index + 1} 行格式错误：应为 "数量 * (参数1, 参数2, ...参数8)"`);
+                    }
+                });
+                
+                if (newPopulations.length === 0) {
+                    throw new Error('没有找到有效的参数行');
+                }
+                
+                // 更新全局种群数据
+                populations = newPopulations;
+                updatePopulationDisplay();
+                
+                // 如果正在运行，重新开始模拟
+                if (isRunning) {
+                    startSimulation();
+                }
+                
+                showParseStatus(`✅ 解析成功！创建了 ${newPopulations.length} 个种群，共 ${totalParsed} 个粒子`, 'success');
+                console.log(`📝 自定义参数解析成功: ${newPopulations.length} 个种群, ${totalParsed} 个粒子`);
+                
+            } catch (error) {
+                console.error('❌ 参数解析失败:', error);
+                showParseStatus(`❌ 解析失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 清空参数输入
+        function clearParameters() {
+            document.getElementById('parameterInput').value = '';
+            showParseStatus('输入已清空', 'info');
+            setTimeout(() => {
+                document.getElementById('parseStatus').style.display = 'none';
+            }, 2000);
+        }
+        
+        // 显示解析状态
+        function showParseStatus(message, type) {
+            const statusDiv = document.getElementById('parseStatus');
+            statusDiv.textContent = message;
+            statusDiv.className = `parse-status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
         console.log('🌐 SwarmChemistry 云端版加载完成');
-        console.log('🔗 API端点:', SYNC_CONFIG.serverUrl);
     </script>
 </body>
 </html> 
