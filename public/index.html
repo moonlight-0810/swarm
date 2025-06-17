@@ -45,6 +45,47 @@
                 0 0 0 3px #ff006e,
                 0 0 0 6px #8338ec,
                 0 0 20px rgba(0, 255, 0, 0.5);
+            position: relative;
+        }
+        
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #000000;
+            border: 3px solid #06ffa5;
+            padding: 8px 12px;
+            border-radius: 0;
+            z-index: 100;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                0 0 15px rgba(6, 255, 165, 0.5);
+        }
+        
+        .language-selector select {
+            background: #000000;
+            color: #00ff00;
+            border: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        .language-selector select option {
+            background: #000000;
+            color: #00ff00;
+            padding: 5px;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
         }
         
         @keyframes gradientShift {
@@ -54,7 +95,7 @@
         
         .header h1 {
             font-size: 2.5em;
-            margin-bottom: 10px;
+            margin: 0;
             color: #ffffff;
             text-shadow: 
                 2px 2px 0px #000000,
@@ -62,6 +103,52 @@
                 6px 6px 0px #8338ec;
             font-weight: 700;
             letter-spacing: 2px;
+        }
+        
+        .concept-header-btn {
+            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
+            border: 3px solid #00ff00 !important;
+            color: #ffffff !important;
+            padding: 15px 25px !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            text-transform: uppercase !important;
+            letter-spacing: 2px !important;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: conceptHeaderPulse 3s ease-in-out infinite;
+            box-shadow: 
+                0 4px 0 #662dbc,
+                0 8px 15px rgba(255, 0, 110, 0.4) !important;
+        }
+        
+        .concept-header-btn:hover {
+            transform: translateY(-3px) scale(1.05) !important;
+            box-shadow: 
+                0 7px 0 #662dbc,
+                0 15px 25px rgba(255, 0, 110, 0.8) !important;
+            animation: none !important;
+        }
+        
+        .concept-header-btn:active {
+            transform: translateY(1px) scale(1.02) !important;
+            box-shadow: 
+                0 3px 0 #662dbc,
+                0 6px 12px rgba(255, 0, 110, 0.6) !important;
+        }
+        
+        @keyframes conceptHeaderPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 4px 0 #662dbc, 0 8px 15px rgba(255, 0, 110, 0.4);
+            }
+            50% { 
+                transform: scale(1.03);
+                box-shadow: 0 6px 0 #662dbc, 0 12px 20px rgba(255, 0, 110, 0.6);
+            }
         }
         
         .header p {
@@ -109,7 +196,7 @@
                 0 0 0 4px #00ff00,
                 0 0 0 8px #8338ec,
                 0 0 30px rgba(255, 0, 110, 0.3);
-            height: 750px;
+            height: 850px;
             overflow-y: auto;
             position: relative;
         }
@@ -254,21 +341,6 @@
         }
         
         .canvas-controls button:nth-child(3) {
-            background: #8338ec;
-            border-color: #9c4dff;
-            color: #ffffff;
-            box-shadow: 
-                0 4px 0 #662dbc,
-                0 8px 15px rgba(131, 56, 236, 0.4);
-        }
-        
-        .canvas-controls button:nth-child(3):hover {
-            box-shadow: 
-                0 6px 0 #662dbc,
-                0 12px 20px rgba(131, 56, 236, 0.6);
-        }
-        
-        .canvas-controls button:nth-child(4) {
             background: #3a86ff;
             border-color: #4dabf7;
             color: #ffffff;
@@ -277,10 +349,38 @@
                 0 8px 15px rgba(58, 134, 255, 0.4);
         }
         
-        .canvas-controls button:nth-child(4):hover {
+        .canvas-controls button:nth-child(3):hover {
             box-shadow: 
                 0 6px 0 #2e6bcc,
                 0 12px 20px rgba(58, 134, 255, 0.6);
+        }
+        
+        .canvas-controls .sync-button {
+            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
+            border-color: #00ff00 !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            font-size: 14px !important;
+            padding: 12px 20px !important;
+            animation: pulse 2s ease-in-out infinite !important;
+            box-shadow: 
+                0 4px 0 #662dbc,
+                0 8px 20px rgba(255, 0, 110, 0.6) !important;
+        }
+        
+        .canvas-controls .sync-button:hover {
+            animation: none !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 
+                0 7px 0 #662dbc,
+                0 15px 25px rgba(255, 0, 110, 0.8) !important;
+        }
+        
+        .canvas-controls .sync-button:active {
+            transform: translateY(2px) !important;
+            box-shadow: 
+                0 2px 0 #662dbc,
+                0 4px 10px rgba(255, 0, 110, 0.4) !important;
         }
         
         /* 预设按钮网格 */
@@ -659,6 +759,15 @@
                 font-size: 2em;
             }
             
+            .header-content {
+                gap: 20px;
+            }
+            
+            .concept-header-btn {
+                padding: 12px 20px !important;
+                font-size: 14px !important;
+            }
+            
             .preset-buttons {
                 grid-template-columns: 1fr;
             }
@@ -666,6 +775,23 @@
             canvas {
                 max-width: 100%;
                 height: auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .concept-header-btn {
+                padding: 10px 18px !important;
+                font-size: 13px !important;
+                letter-spacing: 1px !important;
             }
         }
         
@@ -699,6 +825,124 @@
             image-rendering: pixelated;
             image-rendering: -moz-crisp-edges;
             image-rendering: crisp-edges;
+        }
+        
+        /* 概念文字全屏显示样式 */
+        .concept-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.95) 0%, 
+                rgba(131, 56, 236, 0.15) 25%, 
+                rgba(255, 0, 110, 0.1) 50%, 
+                rgba(58, 134, 255, 0.15) 75%, 
+                rgba(0, 0, 0, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
+        }
+        
+        .concept-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .concept-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            text-align: center;
+            pointer-events: none;
+        }
+        
+        .concept-text {
+            font-family: 'JetBrains Mono', 'Georgia', serif;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #ffffff;
+            text-shadow: 
+                1px 1px 0px #000000,
+                2px 2px 5px rgba(0, 255, 0, 0.3);
+            margin-bottom: 40px;
+        }
+        
+        .concept-text p {
+            margin-bottom: 25px;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+        
+        .concept-text strong {
+            color: #06ffa5;
+            font-weight: 700;
+            text-shadow: 
+                1px 1px 0px #000000,
+                2px 2px 8px rgba(6, 255, 165, 0.6);
+        }
+        
+        .concept-footer {
+            border-top: 3px solid #8338ec;
+            padding-top: 25px;
+            margin-top: 30px;
+            position: relative;
+        }
+        
+        .concept-footer::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            animation: gradientShift 2s ease infinite;
+        }
+        
+        .concept-footer p {
+            font-size: 14px;
+            color: #ff006e;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 
+                1px 1px 0px #000000,
+                2px 2px 5px rgba(255, 0, 110, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        /* 响应式设计 - 概念文字 */
+        @media (max-width: 768px) {
+            .concept-content {
+                padding: 40px 20px;
+                max-width: 95%;
+            }
+            
+            .concept-text {
+                font-size: 14px;
+                line-height: 1.6;
+            }
+            
+            .concept-footer p {
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .concept-content {
+                padding: 30px 15px;
+            }
+            
+            .concept-text {
+                font-size: 13px;
+                line-height: 1.5;
+            }
         }
         
         
@@ -800,25 +1044,159 @@
     </style>
 </head>
 <body>
+    <!-- 概念文字全屏显示 -->
+    <div id="conceptOverlay" class="concept-overlay">
+        <div class="concept-content">
+            <div class="concept-text" id="conceptText">
+                <p data-lang-key="concept_p1">The contemporary <strong>"anti-anthropocentric"</strong> movement views humans as ecological destroyers, urging us to reflect on the harm done to nature. However, it often falls into the extreme of denying human value and responsibility. Since the Industrial Revolution, anthropocentrism has led to severe consequences such as climate change and biodiversity loss, giving rise to new ethical frameworks like animal rights and Earth law, as well as global climate protests and "climate anxiety." This reflects humanity's desire to break free from its "central" position, while still struggling with a logic rooted in its own survival, exemplifying a "regretful awakening." <strong>We aim to find an entry point for redefining human value between "anthropocentrism" and "anti-anthropocentrism."</strong></p>
+                
+                <p data-lang-key="concept_p2">However, <strong>excessive self-deprecation weakens humanity's moral responsibility and unique role. Human consciousness is a singularity in natural evolution, with the ability to predict, construct, and reflect. Not only does it create ecological crises, but it can also shape new orders.</strong> Philosopher Hans Jonas emphasized that technology amplifies the impact of human actions and deepens ethical responsibility. Humans should be redefined as participants and collaborators in the cosmic order.</p>
+                
+                <p data-lang-key="concept_p3">Based on this, this project uses complex systems to simulate the evolution of the cosmic order, with <strong>humans acting as "rule-setters" to intervene in the evolution of complex systems through consciousness.</strong> The CLIP model is introduced to simulate human-like perception, creating a feedback loop between language and images, reflecting the distribution of consciousness in the relationship network between humans and the environment. The project invites multiple participants from different backgrounds to set rules, generating diverse systems, and their interactions shape a dynamic evolutionary landscape. This is not only an algorithmic result but also a symbol of collective consciousness intervening in the generation of order, demonstrating humanity's potential to repair nature and create a new future through consciousness and technology.</p>
+            </div>
+            
+            <div class="concept-footer">
+                <p data-lang-key="click_to_continue">点击屏幕任意位置继续 / Click anywhere to continue</p>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
-            <h1>SwarmChemistry</h1>
-            <p>Cloud Edition - Create particle behaviors, sync to Unity</p>
+            <div class="language-selector">
+                <select id="languageSelect" onchange="switchLanguage(this.value)">
+                    <option value="en">EN</option>
+                    <option value="zh">中文</option>
+                </select>
+            </div>
+            <div class="header-content">
+                <h1 data-lang-key="main_title">Create Your Own Life Rules!</h1>
+                <button onclick="showConcept()" class="concept-header-btn" data-lang-key="concept_btn">Concept</button>
+            </div>
         </div>
         
         <div class="main-layout">
             <div class="canvas-section">
                 <canvas id="swarmCanvas" width="600" height="600"></canvas>
                 <div class="canvas-controls">
-                    <button onclick="startSimulation()">Start</button>
-                    <button onclick="pauseSimulation()">Pause</button>
-                    <button onclick="clearCanvas()">Clear</button>
-                    <button onclick="resetView()">Reset View</button>
+                    <button onclick="startSimulation()" data-lang-key="btn_start">Start</button>
+                    <button onclick="pauseSimulation()" data-lang-key="btn_pause">Pause</button>
+                    <button onclick="resetView()" data-lang-key="btn_reset">Reset</button>
+                    <button class="sync-button" onclick="syncToUnity()" data-lang-key="btn_sync">Sync to Unity</button>
                 </div>
+                <div id="syncStatus" class="sync-status" style="display: none;"></div>
             </div>
             
             <div class="controls-section">
                 <div class="control-group">
+                    <h3 data-lang-key="step1_title">1. Click the button to try the classic digital life example.</h3>
+                    <div class="preset-buttons">
+                        <button onclick="loadPreset('uzushio')" data-lang-key="preset_uzushio">Uzushio</button>
+                        <button onclick="loadPreset('insurmountable_wall')" data-lang-key="preset_wall">Insurmountable Wall</button>
+                        <button onclick="loadPreset('cell_with_two_nuclei')" data-lang-key="preset_cell">Cell with Two Nuclei</button>
+                        <button onclick="loadPreset('multicellularity')" data-lang-key="preset_multi">Multicellularity</button>
+                        <button onclick="loadPreset('jelly_fish')" data-lang-key="preset_jelly">Jelly Fish</button>
+                        <button onclick="loadPreset('playing_catch')" data-lang-key="preset_catch">Playing Catch</button>
+                        <button onclick="loadPreset('pulsating_eye')" data-lang-key="preset_eye">Pulsating Eye</button>
+                        <button onclick="loadPreset('fast_walker_slow_follower')" data-lang-key="preset_walker">Fast Walker & Slow Follower</button>
+                        <button onclick="loadPreset('swinger')" data-lang-key="preset_swinger">Swinger</button>
+                        <button onclick="loadPreset('rotary')" data-lang-key="preset_rotary">Rotary</button>
+                        <button onclick="loadPreset('wedding_ring')" data-lang-key="preset_ring">Wedding Ring</button>
+                        <button onclick="loadPreset('linear_oscillator')" data-lang-key="preset_oscillator">Linear Oscillator</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3 data-lang-key="step2_title">2. The parameters below represent the underlying rules of the digital life on the left. Manually modify the parameters to create your unique digital life.</h3>
+                    <textarea id="parameterInput" class="parameter-input" data-lang-key="param_placeholder" placeholder="Enter parameter format, example:
+48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)
+152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)
+14 * (248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68)
+31 * (141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2)"></textarea>
+                    <div class="parameter-controls">
+                        <button onclick="parseCustomParameters()" data-lang-key="btn_parse">Parse Parameters</button>
+                        <button onclick="clearParameters()" data-lang-key="btn_clear">Clear Input</button>
+                    </div>
+                    <div id="parseStatus" class="parse-status" style="display: none;"></div>
+                </div>
+                
+                <div class="control-group">
+                    <h3 data-lang-key="step3_title">3. Adjust the progress bar to choose parameters and build your digital life.</h3>
+                    <div class="parameter-debugger">
+                        <div class="population-selector">
+                            <label for="populationSelect" data-lang-key="select_population">Select Population:</label>
+                            <select id="populationSelect" onchange="selectPopulation()">
+                                <option value="" data-lang-key="please_select">Please select population...</option>
+                            </select>
+                            <span id="populationInfo" class="population-info"></span>
+                        </div>
+                        
+                        <div id="parameterSliders" class="parameter-sliders" style="display: none;">
+                            <div class="slider-group">
+                                <label data-lang-key="particle_count">Particle Count:</label>
+                                <input type="range" id="slider_particleCount" min="1" max="500" step="1" oninput="updateParameter('particleCount', this.value)">
+                                <span id="value_particleCount" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="neighborhood_radius">Neighborhood Radius:</label>
+                                <input type="range" id="slider_neighborhoodRadius" min="10" max="400" step="0.1" oninput="updateParameter('neighborhoodRadius', this.value)">
+                                <span id="value_neighborhoodRadius" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="normal_speed">Normal Speed:</label>
+                                <input type="range" id="slider_normalSpeed" min="0" max="25" step="0.01" oninput="updateParameter('normalSpeed', this.value)">
+                                <span id="value_normalSpeed" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="max_speed">Max Speed:</label>
+                                <input type="range" id="slider_maxSpeed" min="0" max="50" step="0.01" oninput="updateParameter('maxSpeed', this.value)">
+                                <span id="value_maxSpeed" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="cohesion_c1">Cohesion C1:</label>
+                                <input type="range" id="slider_c1" min="0" max="1" step="0.01" oninput="updateParameter('c1', this.value)">
+                                <span id="value_c1" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="alignment_c2">Alignment C2:</label>
+                                <input type="range" id="slider_c2" min="0" max="1" step="0.01" oninput="updateParameter('c2', this.value)">
+                                <span id="value_c2" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="separation_c3">Separation C3:</label>
+                                <input type="range" id="slider_c3" min="0" max="100" step="0.01" oninput="updateParameter('c3', this.value)">
+                                <span id="value_c3" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="randomness_c4">Randomness C4:</label>
+                                <input type="range" id="slider_c4" min="0" max="1" step="0.01" oninput="updateParameter('c4', this.value)">
+                                <span id="value_c4" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="speed_control_c5">Speed Control C5:</label>
+                                <input type="range" id="slider_c5" min="0" max="1" step="0.01" oninput="updateParameter('c5', this.value)">
+                                <span id="value_c5" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="debugger-controls">
+                                <button onclick="resetSelectedPopulation()" data-lang-key="btn_reset_params">Reset Parameters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                
+                <div class="control-group">
+                    <h3 data-lang-key="step4_title">4. Ready? Click the "Sync to Unity" button on the left to upload your created digital life into a larger world!</h3>
                     <div class="youtube-livestream-container">
                         <div class="livestream-wrapper" id="livestreamWrapper">
                             <iframe 
@@ -831,141 +1209,10 @@
                             </iframe>
                             <div class="livestream-overlay" id="livestreamOverlay">
                                 <div class="overlay-content">
-                                    <button onclick="startLivestream()" class="play-livestream-btn">▶️ Start</button>
+                                    <button onclick="startLivestream()" class="play-livestream-btn" data-lang-key="btn_start_stream">▶️ Start</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <button class="sync-button" onclick="syncToUnity()">Sync to Unity</button>
-                    <div id="syncStatus" class="sync-status" style="display: none;"></div>
-                </div>
-                
-                <div class="control-group">
-                    <h3>Custom Parameters</h3>
-                    <textarea id="parameterInput" class="parameter-input" placeholder="Enter parameter format, example:
-48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)
-152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)
-14 * (248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68)
-31 * (141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2)"></textarea>
-                    <div class="parameter-controls">
-                        <button onclick="parseCustomParameters()">Parse Parameters</button>
-                        <button onclick="clearParameters()">Clear Input</button>
-                    </div>
-                    <div id="parseStatus" class="parse-status" style="display: none;"></div>
-                </div>
-                
-                <div class="control-group">
-                    <h3>Parameter Debugger</h3>
-                    <div class="parameter-debugger">
-                        <div class="population-selector">
-                            <label for="populationSelect">Select Population:</label>
-                            <select id="populationSelect" onchange="selectPopulation()">
-                                <option value="">Please select population...</option>
-                            </select>
-                            <span id="populationInfo" class="population-info"></span>
-                        </div>
-                        
-                        <div id="parameterSliders" class="parameter-sliders" style="display: none;">
-                            <!-- 颜色预览块 -->
-                            <div class="color-preview-group" style="margin-bottom: 20px; padding: 15px; background: rgba(6, 255, 165, 0.1); border: 2px solid #06ffa5;">
-                                <label style="font-size: 14px; font-weight: 700; color: #06ffa5; text-transform: uppercase; margin-bottom: 10px; display: block;">Color Preview:</label>
-                                <div id="colorPreview" style="width: 100%; height: 40px; border: 3px solid #ffffff; background: #ff0000; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: #000000; text-shadow: 1px 1px 0px #ffffff;">
-                                    RGB(255, 255, 255)
-                                </div>
-                            </div>
-                            
-                            <div class="slider-group">
-                                <label>Neighborhood Radius:</label>
-                                <input type="range" id="slider_neighborhoodRadius" min="10" max="400" step="0.1" oninput="updateParameter('neighborhoodRadius', this.value)">
-                                <span id="value_neighborhoodRadius" class="slider-value">0</span>
-                            </div>
-                            
-                            <div class="slider-group">
-                                <label>Normal Speed:</label>
-                                <input type="range" id="slider_normalSpeed" min="0" max="25" step="0.01" oninput="updateParameter('normalSpeed', this.value)">
-                                <span id="value_normalSpeed" class="slider-value">0</span>
-                            </div>
-                            
-                            <div class="slider-group">
-                                <label>Max Speed:</label>
-                                <input type="range" id="slider_maxSpeed" min="0" max="50" step="0.01" oninput="updateParameter('maxSpeed', this.value)">
-                                <span id="value_maxSpeed" class="slider-value">0</span>
-                            </div>
-                            
-                            <div class="slider-group">
-                                <label>Cohesion C1:</label>
-                                <input type="range" id="slider_c1" min="0" max="1" step="0.01" oninput="updateParameter('c1', this.value)">
-                                <span id="value_c1" class="slider-value">0</span>
-                            </div>
-                            
-                            <div class="slider-group">
-                                <label>Alignment C2:</label>
-                                <input type="range" id="slider_c2" min="0" max="1" step="0.01" oninput="updateParameter('c2', this.value)">
-                                <span id="value_c2" class="slider-value">0</span>
-                            </div>
-                            
-                            <div class="slider-group">
-                                <label>Separation C3:</label>
-                                <input type="range" id="slider_c3" min="0" max="100" step="0.01" oninput="updateParameter('c3', this.value)">
-                                <span id="value_c3" class="slider-value">0</span>
-                            </div>
-                            
-                            <div class="slider-group">
-                                <label>Randomness C4:</label>
-                                <input type="range" id="slider_c4" min="0" max="1" step="0.01" oninput="updateParameter('c4', this.value)">
-                                <span id="value_c4" class="slider-value">0</span>
-                            </div>
-                            
-                            <div class="slider-group">
-                                <label>Speed Control C5:</label>
-                                <input type="range" id="slider_c5" min="0" max="1" step="0.01" oninput="updateParameter('c5', this.value)">
-                                <span id="value_c5" class="slider-value">0</span>
-                            </div>
-                            
-                            <div class="debugger-controls">
-                                <button onclick="resetSelectedPopulation()">Reset Parameters</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <h3>Classic SwarmChemistry Presets (Group 1)</h3>
-                    <div class="preset-buttons">
-                        <button onclick="loadPreset('uzushio')">Uzushio</button>
-                        <button onclick="loadPreset('insurmountable_wall')">Insurmountable Wall</button>
-                        <button onclick="loadPreset('cell_with_two_nuclei')">Cell with Two Nuclei</button>
-                        <button onclick="loadPreset('multicellularity')">Multicellularity</button>
-                        <button onclick="loadPreset('jelly_fish')">Jelly Fish</button>
-                        <button onclick="loadPreset('no_wait_this_way')">No, Wait - This Way</button>
-                        <button onclick="loadPreset('recombining_blobs')">Recombining Blobs</button>
-                        <button onclick="loadPreset('playing_catch')">Playing Catch</button>
-                        <button onclick="loadPreset('pulsating_eye')">Pulsating Eye</button>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <h3>Classic SwarmChemistry Presets (Group 2)</h3>
-                    <div class="preset-buttons">
-                        <button onclick="loadPreset('chaos_cells')">Chaos Cells</button>
-                        <button onclick="loadPreset('aggressive_predator')">Aggressive Predator</button>
-                        <button onclick="loadPreset('fast_walker_slow_follower')">Fast Walker & Slow Follower</button>
-                        <button onclick="loadPreset('swinger')">Swinger</button>
-                        <button onclick="loadPreset('rotary')">Rotary</button>
-                        <button onclick="loadPreset('wedding_ring')">Wedding Ring</button>
-                        <button onclick="loadPreset('turbulent_runner')">Turbulent Runner</button>
-                        <button onclick="loadPreset('blobs')">Blobs</button>
-                        <button onclick="loadPreset('linear_oscillator')">Linear Oscillator</button>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <h3>Current Population</h3>
-                    <div id="populationDisplay" class="population-display">
-                        Click preset buttons to generate particle populations...
                     </div>
                 </div>
             </div>
@@ -974,6 +1221,100 @@
 
     <script>
         // SwarmChemistry Cloud Edition - Algorithm implementation consistent with original Java version
+        
+        // 语言系统
+        let currentLanguage = 'en';
+        
+        const translations = {
+            en: {
+                main_title: "Create Your Own Life Rules!",
+                concept_btn: "Concept",
+                btn_start: "Start",
+                btn_pause: "Pause", 
+                btn_reset: "Reset",
+                btn_sync: "Sync to Unity",
+                step1_title: "1. Click the button to try the classic digital life example.",
+                step2_title: "2. The parameters below represent the underlying rules of the digital life on the left. Manually modify the parameters to create your unique digital life.",
+                step3_title: "3. Adjust the progress bar to choose parameters and build your digital life.",
+                step4_title: "4. Ready? Click the \"Sync to Unity\" button on the left to upload your created digital life into a larger world!",
+                preset_uzushio: "Uzushio",
+                preset_wall: "Insurmountable Wall",
+                preset_cell: "Cell with Two Nuclei",
+                preset_multi: "Multicellularity",
+                preset_jelly: "Jelly Fish",
+                preset_catch: "Playing Catch",
+                preset_eye: "Pulsating Eye",
+                preset_walker: "Fast Walker & Slow Follower",
+                preset_swinger: "Swinger",
+                preset_rotary: "Rotary",
+                preset_ring: "Wedding Ring",
+                preset_oscillator: "Linear Oscillator",
+                param_placeholder: "Enter parameter format, example:\n48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)\n152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)\n14 * (248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68)\n31 * (141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2)",
+                btn_parse: "Parse Parameters",
+                btn_clear: "Clear Input",
+                select_population: "Select Population:",
+                please_select: "Please select population...",
+                particle_count: "Particle Count:",
+                neighborhood_radius: "Neighborhood Radius:",
+                normal_speed: "Normal Speed:",
+                max_speed: "Max Speed:",
+                cohesion_c1: "Cohesion C1:",
+                alignment_c2: "Alignment C2:",
+                separation_c3: "Separation C3:",
+                randomness_c4: "Randomness C4:",
+                speed_control_c5: "Speed Control C5:",
+                btn_reset_params: "Reset Parameters",
+                btn_start_stream: "▶️ Start",
+                click_to_continue: "Click anywhere to continue",
+                concept_p1: "In contemporary 'post-anthropocentrism' thought, many view humans as the primary destroyers of nature, prompting a deep reflection on the environmental impacts of human activities. However, this critique often becomes extreme, overlooking the unique role and responsibility humans may have in the natural order. Since the Industrial Revolution, issues such as climate change and biodiversity loss have intensified, forcing us to redefine our relationship with nature.",
+                concept_p2: "Yet, humans are not merely creators of ecological crises—we also have the ability to repair and reshape the world. Human consciousness, as a singular point in natural evolution, possesses the power to predict, create, and reflect. As philosopher Hans Jonas suggested, technological progress amplifies the impact of human actions, thus increasing our ethical responsibility. We are capable not only of destroying nature but also of creating new orders.",
+                concept_p3: "In this project, you will become a 'rule setter', intervening in the evolution of a complex system to shape a dynamic natural order. You can design and adjust parameters, placing them within a grand evolutionary landscape, and collaborate with players from around the world to shape the future of ecological order. This is not just a technical computation—it represents how collective consciousness can intervene in the generation of natural order, reminding us that through the fusion of consciousness and technology, we have the power to restore nature and create a new future."
+            },
+            zh: {
+                main_title: "创造你的生命规则！",
+                concept_btn: "理念",
+                btn_start: "开始",
+                btn_pause: "暂停",
+                btn_reset: "重置",
+                btn_sync: "同步到Unity",
+                step1_title: "1. 点击按钮尝试经典的数字生命样例。",
+                step2_title: "2. 下方参数代表左侧数字生命的底层规则。手动修改参数，创造你独特的数字生命。",
+                step3_title: "3. 调整进度条选择参数，构建你的数字生命。",
+                step4_title: "4. 准备好了吗？点击左侧\"同步到Unity\"按钮，将你创造的数字生命上传到更大的世界中！",
+                preset_uzushio: "漩涡",
+                preset_wall: "不可逾越之壁",
+                preset_cell: "双核细胞",
+                preset_multi: "多细胞性",
+                preset_jelly: "水母",
+                preset_catch: "追逐游戏",
+                preset_eye: "脉动之眼",
+                preset_walker: "快行者慢跟随者",
+                preset_swinger: "摆动者",
+                preset_rotary: "旋转体",
+                preset_ring: "婚戒",
+                preset_oscillator: "线性振荡器",
+                param_placeholder: "输入参数格式，例如：\n48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)\n152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)\n14 * (248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68)\n31 * (141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2)",
+                btn_parse: "解析参数",
+                btn_clear: "清空输入",
+                select_population: "选择种群：",
+                please_select: "请选择种群...",
+                particle_count: "粒子数量：",
+                neighborhood_radius: "邻域半径：",
+                normal_speed: "正常速度：",
+                max_speed: "最大速度：",
+                cohesion_c1: "聚集力 C1：",
+                alignment_c2: "对齐力 C2：",
+                separation_c3: "分离力 C3：",
+                randomness_c4: "随机性 C4：",
+                speed_control_c5: "速度控制 C5：",
+                btn_reset_params: "重置参数",
+                btn_start_stream: "▶️ 开始",
+                click_to_continue: "点击屏幕任意位置继续",
+                concept_p1: "在当代'去人类中心主义'思潮中，很多人认为人类是自然的破坏者，这促使我们深刻反思人类活动对环境的影响。然而，这种批判往往过于极端，忽视了人类在自然秩序中独特的角色和责任。自工业革命以来，气候变化、生物多样性丧失等问题不断加剧，迫使我们重新定义与自然的关系。",
+                concept_p2: "但人类并非仅是生态危机的制造者，我们同样具备修复和重塑的能力。人类意识作为自然演化中的奇点，具备预测、创造和反思的力量。正如哲学家汉斯·约纳斯所说，技术的进步扩大了人类行为的影响，也意味着我们肩负更大的伦理责任。我们不仅可以破坏自然，更能创造新秩序。",
+                concept_p3: "在这个项目中，你将成为'规则设定者'，通过干预复杂系统的演化，塑造一个动态的自然秩序。你可以设计并调整参数，将其放入一个宏大的演化景观中，与来自世界各地的其他玩家共同塑造未来的生态秩序。这不仅仅是技术的运算，它代表了群体意识如何共同介入自然秩序的生成，让我们重新认识到：通过意识与技术的结合，我们有能力修复自然，创造一个全新的未来。"
+            }
+        };
         
         // Global variables
         let canvas, ctx;
@@ -1074,6 +1415,79 @@
             }
         }
         
+        // 概念文字显示控制
+        let isConceptVisible = true; // 页面加载时默认显示
+        
+        // 显示概念文字
+        function showConcept() {
+            const overlay = document.getElementById('conceptOverlay');
+            overlay.classList.remove('hidden');
+            isConceptVisible = true;
+            console.log('📖 Concept overlay shown');
+        }
+        
+        // 隐藏概念文字
+        function hideConcept() {
+            const overlay = document.getElementById('conceptOverlay');
+            overlay.classList.add('hidden');
+            isConceptVisible = false;
+            console.log('📖 Concept overlay hidden');
+        }
+        
+        // 语言切换功能
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('swarm_language', lang);
+            updatePageTexts();
+            console.log(`🌐 Language switched to: ${lang}`);
+        }
+        
+        // 更新页面文本
+        function updatePageTexts() {
+            const elements = document.querySelectorAll('[data-lang-key]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    if (element.tagName === 'TEXTAREA') {
+                        element.placeholder = translations[currentLanguage][key];
+                    } else {
+                        element.textContent = translations[currentLanguage][key];
+                    }
+                }
+            });
+            
+            // 更新种群选择器的选项
+            updatePopulationSelectorText();
+        }
+        
+        // 初始化语言设置
+        function initializeLanguage() {
+            // 从本地存储获取语言设置，默认为英文
+            const savedLanguage = localStorage.getItem('swarm_language') || 'en';
+            currentLanguage = savedLanguage;
+            
+            // 设置语言选择器的值
+            const languageSelect = document.getElementById('languageSelect');
+            if (languageSelect) {
+                languageSelect.value = currentLanguage;
+            }
+            
+            // 更新页面文本
+            updatePageTexts();
+        }
+        
+        // 更新种群选择器文本
+        function updatePopulationSelectorText() {
+            const selector = document.getElementById('populationSelect');
+            if (!selector) return;
+            
+            // 更新默认选项
+            const defaultOption = selector.querySelector('option[value=""]');
+            if (defaultOption && translations[currentLanguage]['please_select']) {
+                defaultOption.textContent = translations[currentLanguage]['please_select'];
+            }
+        }
+        
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             canvas = document.getElementById('swarmCanvas');
@@ -1090,14 +1504,49 @@
             canvas.style.height = displayHeight + 'px';
             ctx.scale(dpr, dpr);
             
+            // 初始化语言系统
+            initializeLanguage();
+            
             setupEventListeners();
+            setupConceptOverlay(); // 设置概念文字叠加层
             initializeSwarm();
             animate();
             
             console.log('🎮 SwarmChemistry Cloud Edition initialized');
             console.log('🖼️ Canvas size: 600x600');
             console.log('🌐 Server URL:', SYNC_CONFIG.serverUrl);
+            console.log('🌍 Language:', currentLanguage);
         });
+        
+        // 概念文字叠加层设置
+        function setupConceptOverlay() {
+            const overlay = document.getElementById('conceptOverlay');
+            
+            // 页面加载时显示概念文字
+            showConcept();
+            
+            // 点击叠加层任意位置关闭
+            overlay.addEventListener('click', (e) => {
+                if (isConceptVisible) {
+                    hideConcept();
+                }
+            });
+            
+            // 防止内容区域点击事件冒泡
+            const content = overlay.querySelector('.concept-content');
+            if (content) {
+                content.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+            
+            // ESC键关闭概念文字
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && isConceptVisible) {
+                    hideConcept();
+                }
+            });
+        }
         
         // 事件监听器设置
         function setupEventListeners() {
@@ -1370,9 +1819,6 @@
                 }
             });
             
-            let displayText = `Total population: ${populationStats.size}\n`;
-            displayText += `Total particles: ${individuals.length}\n\n`;
-            
             // 构建参数输入栏的同步文本
             let parameterText = '';
             
@@ -1381,7 +1827,6 @@
             
             let index = 1;
             populationStats.forEach((count, params) => {
-                displayText += `Population ${index}: ${count} * ${params}\n`;
                 parameterText += `${count} * ${params}\n`;
                 
                 // 解析参数用于调试器
@@ -1406,8 +1851,6 @@
                 }
                 index++;
             });
-            
-            document.getElementById('populationDisplay').textContent = displayText;
             
             // 实时同步到参数输入栏（仅在有个体时）
             const parameterInput = document.getElementById('parameterInput');
@@ -1462,6 +1905,11 @@
             const population = currentPopulations[index];
             originalParameters = { ...population.parameters };
             
+            // 保存原始粒子数
+            if (!population.originalCount) {
+                population.originalCount = population.count;
+            }
+            
             // 找到属于该种群的所有个体
             selectedPopulationIndividuals = [];
             individuals.forEach(individual => {
@@ -1480,14 +1928,20 @@
             // 显示滑块区域
             document.getElementById('parameterSliders').style.display = 'block';
             
-            // 更新颜色预览
-            updateColorPreview();
-            
             console.log(`🎯 Selected population ${population.index} with ${selectedPopulationIndividuals.length} particles`);
         }
         
         // 更新滑块显示
         function updateSliders(params) {
+            // 先设置粒子数
+            const particleCountSlider = document.getElementById('slider_particleCount');
+            const particleCountValue = document.getElementById('value_particleCount');
+            if (particleCountSlider && particleCountValue) {
+                const currentCount = selectedPopulationIndividuals.length;
+                particleCountSlider.value = currentCount;
+                particleCountValue.textContent = currentCount;
+            }
+            
             const paramNames = ['neighborhoodRadius', 'normalSpeed', 'maxSpeed', 'c1', 'c2', 'c3', 'c4', 'c5'];
             
             paramNames.forEach(name => {
@@ -1503,7 +1957,14 @@
         
         // 更新单个参数
         function updateParameter(paramName, value) {
-            if (selectedPopulationIndex < 0 || selectedPopulationIndividuals.length === 0) return;
+            if (selectedPopulationIndex < 0) return;
+            
+            if (paramName === 'particleCount') {
+                updateParticleCount(parseInt(value));
+                return;
+            }
+            
+            if (selectedPopulationIndividuals.length === 0) return;
             
             const numValue = parseFloat(value);
             const valueSpan = document.getElementById(`value_${paramName}`);
@@ -1514,33 +1975,90 @@
             // 更新当前种群参数
             currentPopulations[selectedPopulationIndex].parameters[paramName] = numValue;
             
-            // 如果是颜色相关参数，显示颜色预览
-            if (['c1', 'c2', 'c3'].includes(paramName)) {
-                const params = currentPopulations[selectedPopulationIndex].parameters;
-                const previewColor = {
-                    c1: params.c1,
-                    c2: params.c2,
-                    c3: params.c3,
-                    getColor: function() {
-                        const r = Math.floor((this.c1 / 1.0) * 255);
-                        const g = Math.floor((this.c2 / 1.0) * 255);
-                        const b = Math.floor((this.c3 / 100.0) * 255);
-                        const minBrightness = 50;
-                        const finalR = Math.max(r, minBrightness);
-                        const finalG = Math.max(g, minBrightness);
-                        const finalB = Math.max(b, minBrightness);
-                        return `rgb(${finalR}, ${finalG}, ${finalB})`;
-                    }
-                };
-                console.log(`🎨 Color parameter ${paramName} changed to ${numValue.toFixed(2)}`);
-                console.log(`🎨 Preview color: ${previewColor.getColor()}`);
-            }
-            
             // 实时应用到个体
             applyParameterChanges();
+        }
+        
+        // 更新粒子数量
+        function updateParticleCount(newCount) {
+            if (selectedPopulationIndex < 0 || newCount < 1) return;
             
-            // 更新颜色预览
-            updateColorPreview();
+            const valueSpan = document.getElementById('value_particleCount');
+            if (valueSpan) {
+                valueSpan.textContent = newCount;
+            }
+            
+            const currentCount = selectedPopulationIndividuals.length;
+            const population = currentPopulations[selectedPopulationIndex];
+            
+            if (newCount > currentCount) {
+                // 增加粒子
+                const addCount = newCount - currentCount;
+                const centerX = 600 / 2;
+                const centerY = 600 / 2;
+                const spawnRadius = 80;
+                
+                // 获取当前种群的参数
+                const targetParams = population.parameters;
+                const swarmParams = new SwarmParameters(
+                    targetParams.neighborhoodRadius,
+                    targetParams.normalSpeed,
+                    targetParams.maxSpeed,
+                    targetParams.c1,
+                    targetParams.c2,
+                    targetParams.c3,
+                    targetParams.c4,
+                    targetParams.c5
+                );
+                
+                for (let i = 0; i < addCount; i++) {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const radius = Math.random() * spawnRadius;
+                    
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius;
+                    
+                    const newIndividual = new SwarmIndividual(
+                        x, y,
+                        (Math.random() - 0.5) * 2,
+                        (Math.random() - 0.5) * 2,
+                        swarmParams
+                    );
+                    
+                    individuals.push(newIndividual);
+                    selectedPopulationIndividuals.push(newIndividual);
+                }
+                
+                console.log(`➕ Added ${addCount} particles to population ${population.index}`);
+                
+            } else if (newCount < currentCount) {
+                // 减少粒子
+                const removeCount = currentCount - newCount;
+                
+                for (let i = 0; i < removeCount; i++) {
+                    const individualToRemove = selectedPopulationIndividuals.pop();
+                    if (individualToRemove) {
+                        const index = individuals.indexOf(individualToRemove);
+                        if (index > -1) {
+                            individuals.splice(index, 1);
+                        }
+                    }
+                }
+                
+                console.log(`➖ Removed ${removeCount} particles from population ${population.index}`);
+            }
+            
+            // 更新种群计数
+            population.count = newCount;
+            
+            // 更新显示（仅更新参数输入框，不重建种群列表）
+            updateParameterInputOnly();
+            
+            // 更新种群信息显示
+            document.getElementById('populationInfo').textContent = 
+                `${selectedPopulationIndividuals.length} particles`;
+            
+            console.log(`🔢 Updated particle count to ${newCount} for population ${population.index}`);
         }
         
         // 应用参数更改
@@ -1592,20 +2110,14 @@
                 }
             });
             
-            let displayText = `Total population: ${populationStats.size}\n`;
-            displayText += `Total particles: ${individuals.length}\n\n`;
-            
             // 构建参数输入栏的同步文本
             let parameterText = '';
             
             let index = 1;
             populationStats.forEach((count, params) => {
-                displayText += `Population ${index}: ${count} * ${params}\n`;
                 parameterText += `${count} * ${params}\n`;
                 index++;
             });
-            
-            document.getElementById('populationDisplay').textContent = displayText;
             
             // 实时同步到参数输入栏
             const parameterInput = document.getElementById('parameterInput');
@@ -1616,21 +2128,27 @@
         
         // 重置选中种群参数
         function resetSelectedPopulation() {
-            if (selectedPopulationIndex < 0 || !originalParameters || selectedPopulationIndividuals.length === 0) return;
+            if (selectedPopulationIndex < 0 || !originalParameters) return;
             
             // 恢复原始参数
             currentPopulations[selectedPopulationIndex].parameters = { ...originalParameters };
             
+            // 恢复原始粒子数
+            const population = currentPopulations[selectedPopulationIndex];
+            const originalCount = population.originalCount || population.count;
+            if (originalCount !== selectedPopulationIndividuals.length) {
+                updateParticleCount(originalCount);
+            }
+            
             // 更新滑块显示
             updateSliders(originalParameters);
             
-            // 应用更改
-            applyParameterChanges();
+            // 应用更改（如果还有粒子的话）
+            if (selectedPopulationIndividuals.length > 0) {
+                applyParameterChanges();
+            }
             
-            // 更新颜色预览
-            updateColorPreview();
-            
-            console.log(`🔄 Reset parameters for ${selectedPopulationIndividuals.length} particles`);
+            console.log(`🔄 Reset parameters and particle count for population ${currentPopulations[selectedPopulationIndex].index}`);
         }
         
         // 预设配置 - 经典SwarmChemistry预设
@@ -1670,15 +2188,6 @@
                 { count: 67, params: [288.17, 6.19, 23.37, 0.95, 1.0, 1.31, 0.1, 0.9] },
                 { count: 68, params: [150.5, 12.97, 15.87, 0.46, 0.39, 57.95, 0.17, 0.48] }
             ],
-            no_wait_this_way: [
-                { count: 60, params: [262.68, 2.82, 38.32, 0.21, 0.01, 54.93, 0.11, 0.19] },
-                { count: 40, params: [78.58, 5.7, 33.23, 0.89, 0.18, 45.44, 0.04, 0.05] },
-                { count: 40, params: [257.27, 14.96, 35.66, 0.2, 0.8, 47.81, 0.13, 0.13] }
-            ],
-            recombining_blobs: [
-                { count: 132, params: [45.91, 10.82, 21.11, 0.86, 0.13, 42.48, 0.32, 0.74] },
-                { count: 84, params: [113.26, 3.41, 25.71, 0.4, 0.39, 49.53, 0.13, 0.24] }
-            ],
             playing_catch: [
                 { count: 76, params: [84.06, 0.09, 9.89, 0.33, 0.32, 15.66, 0.22, 0.68] },
                 { count: 100, params: [158.86, 18.4, 24.98, 0.3, 0.3, 1.72, 0.06, 0.37] }
@@ -1687,18 +2196,6 @@
                 { count: 102, params: [293.86, 17.06, 38.3, 0.81, 0.05, 0.83, 0.2, 0.9] },
                 { count: 124, params: [226.18, 19.27, 24.57, 0.95, 0.84, 13.09, 0.07, 0.8] },
                 { count: 74, params: [49.98, 8.44, 4.39, 0.92, 0.14, 96.92, 0.13, 0.51] }
-            ],
-            chaos_cells: [
-                { count: 144, params: [109.03, 6.71, 12.7, 0.47, 0.6, 61.43, 0.02, 0.21] },
-                { count: 89, params: [117.15, 16.33, 31.88, 0.39, 0.13, 12.96, 0.48, 0.8] },
-                { count: 67, params: [76.3, 8.59, 26.57, 0.7, 0.64, 28.39, 0.3, 0.35] }
-            ],
-            aggressive_predator: [
-                { count: 18, params: [211.92, 12.59, 19.37, 0.09, 0.21, 57.92, 0.0, 0.95] },
-                { count: 41, params: [257.27, 14.96, 35.66, 0.2, 0.8, 47.81, 0.13, 0.13] },
-                { count: 35, params: [262.68, 2.82, 38.32, 0.21, 0.01, 54.93, 0.11, 0.19] },
-                { count: 31, params: [78.58, 5.7, 33.23, 0.89, 0.18, 45.44, 0.04, 0.05] },
-                { count: 7, params: [194.21, 12.88, 21.68, 0.97, 0.19, 99.21, 0.5, 0.13] }
             ],
             fast_walker_slow_follower: [
                 { count: 67, params: [216.35, 11.75, 7.7, 0.83, 0.97, 97.31, 0.02, 0.38] },
@@ -1720,13 +2217,6 @@
                 { count: 24, params: [220.51, 13.88, 3.47, 0.46, 0.38, 6.23, 0.19, 0.68] },
                 { count: 13, params: [64.07, 1.4, 19.7, 0.88, 0.27, 0.36, 0.47, 0.72] },
                 { count: 35, params: [117.53, 7.31, 21.72, 0.3, 0.5, 98.69, 0.03, 0.29] }
-            ],
-            turbulent_runner: [
-                { count: 131, params: [177.1, 9.71, 30.06, 0.8, 0.43, 19.65, 0.45, 0.91] },
-                { count: 169, params: [277.3, 14.67, 37.71, 0.68, 0.23, 77.01, 0.02, 0.31] }
-            ],
-            blobs: [
-                { count: 300, params: [20.8, 1.95, 20.75, 0.95, 0.99, 9.31, 0.05, 0.68] }
             ],
             linear_oscillator: [
                 { count: 133, params: [214.41, 17.93, 35.14, 0.64, 0.13, 0.29, 0.08, 0.97] },
@@ -2009,36 +2499,6 @@
         
         console.log('🌐 SwarmChemistry Cloud Edition loaded');
         console.log('🔗 API endpoint:', SYNC_CONFIG.serverUrl);
-        
-        // 更新颜色预览
-        function updateColorPreview() {
-            if (selectedPopulationIndex < 0) return;
-            
-            const params = currentPopulations[selectedPopulationIndex].parameters;
-            const colorPreview = document.getElementById('colorPreview');
-            
-            if (colorPreview) {
-                // 计算颜色
-                const r = Math.floor((params.c1 / 1.0) * 255);
-                const g = Math.floor((params.c2 / 1.0) * 255);
-                const b = Math.floor((params.c3 / 100.0) * 255);
-                const minBrightness = 50;
-                const finalR = Math.max(r, minBrightness);
-                const finalG = Math.max(g, minBrightness);
-                const finalB = Math.max(b, minBrightness);
-                
-                const colorString = `rgb(${finalR}, ${finalG}, ${finalB})`;
-                
-                // 更新预览块
-                colorPreview.style.background = colorString;
-                colorPreview.textContent = `RGB(${finalR}, ${finalG}, ${finalB})`;
-                
-                // 根据背景亮度调整文字颜色
-                const brightness = (finalR * 299 + finalG * 587 + finalB * 114) / 1000;
-                colorPreview.style.color = brightness > 128 ? '#000000' : '#ffffff';
-                colorPreview.style.textShadow = brightness > 128 ? '1px 1px 0px #ffffff' : '1px 1px 0px #000000';
-            }
-        }
         
         // YouTube直播控制功能
         let isLivestreamPlaying = false;
