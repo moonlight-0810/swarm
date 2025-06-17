@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>群体化学 - SwarmChemistry 云端版</title>
+    <title>SwarmChemistry - Cloud Edition</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,11 +14,16 @@
         }
         
         body {
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
             min-height: 100vh;
             overflow-x: auto;
+            image-rendering: pixelated;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(120, 255, 198, 0.2) 0%, transparent 50%);
         }
         
         .container {
@@ -28,54 +35,106 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+            padding: 20px;
+            border: 3px solid #00ff00;
+            border-radius: 0;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                0 0 0 6px #8338ec,
+                0 0 20px rgba(0, 255, 0, 0.5);
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #ffffff;
+            text-shadow: 
+                2px 2px 0px #000000,
+                4px 4px 0px #ff006e,
+                6px 6px 0px #8338ec;
+            font-weight: 700;
+            letter-spacing: 2px;
         }
         
         .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
+            font-size: 1.1em;
+            color: #ffffff;
+            text-shadow: 1px 1px 0px #000000;
+            font-weight: 600;
         }
         
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 650px 1fr;
             gap: 30px;
             align-items: start;
         }
         
         .canvas-section {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+            background: #1a1a1a;
+            border: 4px solid #00ff00;
             padding: 25px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 
+                0 0 0 4px #ff006e,
+                0 0 0 8px #8338ec,
+                0 0 30px rgba(0, 255, 0, 0.3);
+            position: relative;
+        }
+        
+        .canvas-section::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            z-index: -1;
+            border-radius: 0;
         }
         
         .controls-section {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+            background: #1a1a1a;
+            border: 4px solid #ff006e;
             padding: 25px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            height: fit-content;
-            max-height: 1200px;
+            box-shadow: 
+                0 0 0 4px #00ff00,
+                0 0 0 8px #8338ec,
+                0 0 30px rgba(255, 0, 110, 0.3);
+            height: 750px;
             overflow-y: auto;
+            position: relative;
+        }
+        
+        .controls-section::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: linear-gradient(135deg, #8338ec, #3a86ff, #06ffa5, #ff006e);
+            z-index: -1;
         }
         
         canvas {
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
+            border: 4px solid #06ffa5;
             background: #000;
             display: block;
             margin: 0 auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 
+                0 0 0 4px #3a86ff,
+                0 0 20px rgba(6, 255, 165, 0.5),
+                inset 0 0 50px rgba(6, 255, 165, 0.1);
+            image-rendering: pixelated;
         }
         
         .canvas-controls {
@@ -89,7 +148,8 @@
         .control-group {
             margin-bottom: 25px;
             padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 2px solid #8338ec;
+            position: relative;
         }
         
         .control-group:last-child {
@@ -97,124 +157,291 @@
             margin-bottom: 0;
         }
         
+        .control-group::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            animation: gradientShift 2s ease infinite;
+        }
+        
         .control-group h3 {
             margin: 0 0 15px 0;
             font-size: 18px;
-            color: #fff;
+            color: #06ffa5;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px #000000;
         }
         
+        /* 彩色按钮样式 */
         button {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
+            border: 3px solid;
+            color: #000000;
+            padding: 12px 20px;
             cursor: pointer;
             margin: 5px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             font-size: 14px;
-            font-weight: 500;
-            backdrop-filter: blur(10px);
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            text-shadow: none;
+        }
+        
+        /* 默认按钮 - 绿色 */
+        button {
+            background: #06ffa5;
+            border-color: #00ff00;
+            box-shadow: 
+                0 4px 0 #00cc82,
+                0 8px 15px rgba(6, 255, 165, 0.4);
         }
         
         button:hover {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 
+                0 6px 0 #00cc82,
+                0 12px 20px rgba(6, 255, 165, 0.6);
         }
         
         button:active {
-            transform: translateY(0);
+            transform: translateY(2px);
+            box-shadow: 
+                0 2px 0 #00cc82,
+                0 4px 10px rgba(6, 255, 165, 0.4);
         }
         
+        /* Canvas控制按钮 - 不同颜色 */
+        .canvas-controls button:nth-child(1) {
+            background: #ff006e;
+            border-color: #ff1744;
+            color: #ffffff;
+            box-shadow: 
+                0 4px 0 #cc0055,
+                0 8px 15px rgba(255, 0, 110, 0.4);
+        }
+        
+        .canvas-controls button:nth-child(1):hover {
+            box-shadow: 
+                0 6px 0 #cc0055,
+                0 12px 20px rgba(255, 0, 110, 0.6);
+        }
+        
+        .canvas-controls button:nth-child(2) {
+            background: #ffbe0b;
+            border-color: #ffc107;
+            color: #000000;
+            box-shadow: 
+                0 4px 0 #cc9808,
+                0 8px 15px rgba(255, 190, 11, 0.4);
+        }
+        
+        .canvas-controls button:nth-child(2):hover {
+            box-shadow: 
+                0 6px 0 #cc9808,
+                0 12px 20px rgba(255, 190, 11, 0.6);
+        }
+        
+        .canvas-controls button:nth-child(3) {
+            background: #8338ec;
+            border-color: #9c4dff;
+            color: #ffffff;
+            box-shadow: 
+                0 4px 0 #662dbc,
+                0 8px 15px rgba(131, 56, 236, 0.4);
+        }
+        
+        .canvas-controls button:nth-child(3):hover {
+            box-shadow: 
+                0 6px 0 #662dbc,
+                0 12px 20px rgba(131, 56, 236, 0.6);
+        }
+        
+        .canvas-controls button:nth-child(4) {
+            background: #3a86ff;
+            border-color: #4dabf7;
+            color: #ffffff;
+            box-shadow: 
+                0 4px 0 #2e6bcc,
+                0 8px 15px rgba(58, 134, 255, 0.4);
+        }
+        
+        .canvas-controls button:nth-child(4):hover {
+            box-shadow: 
+                0 6px 0 #2e6bcc,
+                0 12px 20px rgba(58, 134, 255, 0.6);
+        }
+        
+        /* 预设按钮网格 */
         .preset-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 12px;
+        }
+        
+        .preset-buttons button:nth-child(odd) {
+            background: #ff006e;
+            border-color: #ff1744;
+            color: #ffffff;
+            box-shadow: 
+                0 4px 0 #cc0055,
+                0 8px 15px rgba(255, 0, 110, 0.4);
+        }
+        
+        .preset-buttons button:nth-child(even) {
+            background: #8338ec;
+            border-color: #9c4dff;
+            color: #ffffff;
+            box-shadow: 
+                0 4px 0 #662dbc,
+                0 8px 15px rgba(131, 56, 236, 0.4);
+        }
+        
+        .preset-buttons button:nth-child(3n) {
+            background: #3a86ff;
+            border-color: #4dabf7;
+            color: #ffffff;
+            box-shadow: 
+                0 4px 0 #2e6bcc,
+                0 8px 15px rgba(58, 134, 255, 0.4);
+        }
+        
+        .preset-buttons button:nth-child(4n) {
+            background: #06ffa5;
+            border-color: #00ff00;
+            color: #000000;
+            box-shadow: 
+                0 4px 0 #00cc82,
+                0 8px 15px rgba(6, 255, 165, 0.4);
+        }
+        
+        .preset-buttons button:nth-child(5n) {
+            background: #ffbe0b;
+            border-color: #ffc107;
+            color: #000000;
+            box-shadow: 
+                0 4px 0 #cc9808,
+                0 8px 15px rgba(255, 190, 11, 0.4);
+        }
+        
+        /* 同步按钮特殊样式 */
+        .sync-button {
+            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
+            border-color: #00ff00 !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
+            padding: 15px 30px !important;
+            animation: pulse 2s ease-in-out infinite !important;
+            box-shadow: 
+                0 4px 0 #662dbc,
+                0 8px 20px rgba(255, 0, 110, 0.6) !important;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .sync-button:hover {
+            animation: none !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 
+                0 7px 0 #662dbc,
+                0 15px 25px rgba(255, 0, 110, 0.8) !important;
         }
         
         .population-display {
-            background: rgba(0, 0, 0, 0.4);
+            background: #000000;
+            border: 3px solid #00ff00;
             padding: 15px;
-            border-radius: 8px;
-            font-family: 'Consolas', 'Monaco', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             max-height: 250px;
             overflow-y: auto;
             margin-top: 10px;
             white-space: pre-line;
-            border: 1px solid rgba(255,255,255,0.1);
             line-height: 1.4;
+            color: #00ff00;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                inset 0 0 20px rgba(0, 255, 0, 0.1);
         }
         
-        /* 网络同步样式 */
-        .sync-button {
-            background: linear-gradient(145deg, #4CAF50, #45a049) !important;
-            border-color: #4CAF50 !important;
-            font-weight: bold;
-            font-size: 16px;
-            padding: 12px 24px;
-        }
-        
-        .sync-button:hover {
-            background: linear-gradient(145deg, #5CBF60, #4CAF50) !important;
-        }
-        
-        .sync-status {
+        /* 状态消息样式 */
+        .sync-status, .parse-status {
             margin-top: 15px;
             padding: 12px;
-            border-radius: 8px;
+            border: 3px solid;
             font-size: 14px;
             text-align: center;
-            font-weight: 500;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
-        .sync-status.success {
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid rgba(76, 175, 80, 0.5);
-            color: #4CAF50;
+        .sync-status.success, .parse-status.success {
+            background: #000000;
+            border-color: #00ff00;
+            color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
         }
         
-        .sync-status.error {
-            background: rgba(244, 67, 54, 0.2);
-            border: 1px solid rgba(244, 67, 54, 0.5);
-            color: #f44336;
+        .sync-status.error, .parse-status.error {
+            background: #000000;
+            border-color: #ff006e;
+            color: #ff006e;
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
         }
         
-        .sync-status.info {
-            background: rgba(33, 150, 243, 0.2);
-            border: 1px solid rgba(33, 150, 243, 0.5);
-            color: #2196F3;
+        .sync-status.info, .parse-status.info {
+            background: #000000;
+            border-color: #3a86ff;
+            color: #3a86ff;
+            box-shadow: 0 0 20px rgba(58, 134, 255, 0.5);
         }
         
         /* 参数输入样式 */
         .parameter-input {
             width: 100%;
             min-height: 120px;
-            padding: 12px;
+            padding: 15px;
             margin-bottom: 15px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            color: white;
-            font-family: 'Consolas', 'Monaco', monospace;
+            background: #000000;
+            border: 3px solid #8338ec;
+            color: #00ff00;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             line-height: 1.4;
             resize: vertical;
-            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                inset 0 0 20px rgba(131, 56, 236, 0.1);
         }
         
         .parameter-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: #666666;
         }
         
         .parameter-input:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            border-color: #00ff00;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                0 0 30px rgba(0, 255, 0, 0.5),
+                inset 0 0 20px rgba(0, 255, 0, 0.1);
         }
         
         .parameter-controls {
@@ -224,31 +451,170 @@
             margin-bottom: 15px;
         }
         
-        .parse-status {
+        .parameter-controls button:nth-child(1) {
+            background: #06ffa5;
+            border-color: #00ff00;
+            color: #000000;
+        }
+        
+        .parameter-controls button:nth-child(2) {
+            background: #ff006e;
+            border-color: #ff1744;
+            color: #ffffff;
+        }
+        
+        /* 参数调试器样式 */
+        .parameter-debugger {
+            background: #000000;
+            border: 3px solid #3a86ff;
+            padding: 15px;
             margin-top: 10px;
-            padding: 12px;
-            border-radius: 8px;
+            box-shadow: 
+                0 0 0 3px #06ffa5,
+                inset 0 0 20px rgba(58, 134, 255, 0.1);
+        }
+        
+        .population-selector {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .population-selector label {
+            font-weight: 700;
+            color: #06ffa5;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 0px #000000;
+        }
+        
+        .population-selector select {
+            background: #000000;
+            border: 3px solid #8338ec;
+            color: #00ff00;
+            padding: 8px 12px;
             font-size: 14px;
-            text-align: center;
-            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+            min-width: 200px;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                0 0 15px rgba(131, 56, 236, 0.3);
         }
         
-        .parse-status.success {
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid rgba(76, 175, 80, 0.5);
-            color: #4CAF50;
+        .population-selector select option {
+            background: #000000;
+            color: #00ff00;
         }
         
-        .parse-status.error {
-            background: rgba(244, 67, 54, 0.2);
-            border: 1px solid rgba(244, 67, 54, 0.5);
-            color: #f44336;
+        .population-selector select:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                0 0 25px rgba(0, 255, 0, 0.5);
         }
         
-        .parse-status.info {
-            background: rgba(33, 150, 243, 0.2);
-            border: 1px solid rgba(33, 150, 243, 0.5);
-            color: #2196F3;
+        .population-info {
+            font-size: 12px;
+            color: #8338ec;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .parameter-sliders {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(131, 56, 236, 0.1);
+            border: 2px solid #8338ec;
+        }
+        
+        .slider-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #06ffa5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .slider-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: #000000;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            border: 2px solid #ff006e;
+            box-shadow: inset 0 0 10px rgba(255, 0, 110, 0.3);
+        }
+        
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #00ff00;
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 
+                0 0 0 2px #000000,
+                0 0 15px rgba(0, 255, 0, 0.8);
+        }
+        
+        .slider-group input[type="range"]::-webkit-slider-thumb:hover {
+            background: #06ffa5;
+            transform: scale(1.2);
+        }
+        
+        .slider-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #00ff00;
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 
+                0 0 0 2px #000000,
+                0 0 15px rgba(0, 255, 0, 0.8);
+        }
+        
+        .slider-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #ffbe0b;
+            font-weight: 700;
+            min-width: 60px;
+            text-align: right;
+            text-shadow: 1px 1px 0px #000000;
+        }
+        
+        .debugger-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #ff006e;
+        }
+        
+        .debugger-controls button {
+            background: #ffbe0b;
+            border-color: #ffc107;
+            color: #000000;
+            padding: 12px 25px;
+            font-size: 14px;
+            font-weight: 700;
         }
         
         /* 响应式设计 */
@@ -287,283 +653,187 @@
             }
         }
         
-        .parse-status.info {
-            background: rgba(33, 150, 243, 0.2);
-            border: 1px solid rgba(33, 150, 243, 0.5);
-            color: #2196F3;
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 12px;
         }
         
-        /* 参数调试器样式 */
-        .parameter-debugger {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 10px;
+        ::-webkit-scrollbar-track {
+            background: #000000;
+            border: 2px solid #8338ec;
         }
         
-        .population-selector {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+        ::-webkit-scrollbar-thumb {
+            background: #ff006e;
+            border: 2px solid #000000;
         }
         
-        .population-selector label {
-            font-weight: 500;
-            color: #fff;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ff00;
         }
         
-        .population-selector select {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 6px;
-            color: #333;
-            padding: 8px 12px;
-            font-size: 14px;
-            backdrop-filter: blur(10px);
-            min-width: 200px;
+        /* 文字选择样式 */
+        ::selection {
+            background: #ff006e;
+            color: #ffffff;
         }
         
-        .population-selector select option {
-            background: #fff;
-            color: #333;
-        }
-        
-        .population-selector select:focus {
-            outline: none;
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
-        }
-        
-        .population-info {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
-            font-family: 'Consolas', 'Monaco', monospace;
-        }
-        
-        .parameter-sliders {
-            display: grid;
-            gap: 15px;
-        }
-        
-        .slider-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .slider-group label {
-            font-size: 13px;
-            font-weight: 500;
-            color: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .slider-group input[type="range"] {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(255, 255, 255, 0.2);
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-        
-        .slider-group input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: linear-gradient(145deg, #4CAF50, #45a049);
-            cursor: pointer;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }
-        
-        .slider-group input[type="range"]::-webkit-slider-thumb:hover {
-            background: linear-gradient(145deg, #5CBF60, #4CAF50);
-            transform: scale(1.1);
-        }
-        
-        .slider-group input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: linear-gradient(145deg, #4CAF50, #45a049);
-            cursor: pointer;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }
-        
-        .slider-value {
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 12px;
-            color: #4CAF50;
-            font-weight: bold;
-            min-width: 60px;
-            text-align: right;
-        }
-        
-        .debugger-controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .debugger-controls button {
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 600;
+        /* 像素化效果 */
+        .pixel-border {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🐝 群体化学 - SwarmChemistry</h1>
-            <p>🌐 云端版 - 创作粒子行为，同步到Unity体验</p>
+            <h1>SwarmChemistry</h1>
+            <p>Cloud Edition - Create particle behaviors, sync to Unity</p>
         </div>
         
         <div class="main-layout">
             <div class="canvas-section">
-                <canvas id="swarmCanvas" width="1200" height="900"></canvas>
+                <canvas id="swarmCanvas" width="600" height="600"></canvas>
                 <div class="canvas-controls">
-                    <button onclick="startSimulation()">▶️ 开始</button>
-                    <button onclick="pauseSimulation()">⏸️ 暂停</button>
-                    <button onclick="clearCanvas()">🗑️ 清空</button>
-                    <button onclick="resetView()">🔄 重置视图</button>
+                    <button onclick="startSimulation()">Start</button>
+                    <button onclick="pauseSimulation()">Pause</button>
+                    <button onclick="clearCanvas()">Clear</button>
+                    <button onclick="resetView()">Reset View</button>
                 </div>
             </div>
             
             <div class="controls-section">
                 <div class="control-group">
-                    <h3>🚀 同步到Unity</h3>
-                    <button class="sync-button" onclick="syncToUnity()">🚀 同步到Unity</button>
+                    <h3>Sync to Unity</h3>
+                    <button class="sync-button" onclick="syncToUnity()">Sync to Unity</button>
                     <div id="syncStatus" class="sync-status" style="display: none;"></div>
                 </div>
                 
                 <div class="control-group">
-                    <h3>📝 自定义参数</h3>
-                    <textarea id="parameterInput" class="parameter-input" placeholder="输入参数格式，例如：
+                    <h3>Custom Parameters</h3>
+                    <textarea id="parameterInput" class="parameter-input" placeholder="Enter parameter format, example:
 48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)
 152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)
 14 * (248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68)
 31 * (141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2)"></textarea>
                     <div class="parameter-controls">
-                        <button onclick="parseCustomParameters()">🔍 解析参数</button>
-                        <button onclick="clearParameters()">🗑️ 清空输入</button>
+                        <button onclick="parseCustomParameters()">Parse Parameters</button>
+                        <button onclick="clearParameters()">Clear Input</button>
                     </div>
                     <div id="parseStatus" class="parse-status" style="display: none;"></div>
                 </div>
                 
                 <div class="control-group">
-                    <h3>🎛️ 参数调试器</h3>
+                    <h3>Parameter Debugger</h3>
                     <div class="parameter-debugger">
                         <div class="population-selector">
-                            <label for="populationSelect">选择种群:</label>
+                            <label for="populationSelect">Select Population:</label>
                             <select id="populationSelect" onchange="selectPopulation()">
-                                <option value="">请选择种群...</option>
+                                <option value="">Please select population...</option>
                             </select>
                             <span id="populationInfo" class="population-info"></span>
                         </div>
                         
                         <div id="parameterSliders" class="parameter-sliders" style="display: none;">
+                            <!-- 颜色预览块 -->
+                            <div class="color-preview-group" style="margin-bottom: 20px; padding: 15px; background: rgba(6, 255, 165, 0.1); border: 2px solid #06ffa5;">
+                                <label style="font-size: 14px; font-weight: 700; color: #06ffa5; text-transform: uppercase; margin-bottom: 10px; display: block;">Color Preview:</label>
+                                <div id="colorPreview" style="width: 100%; height: 40px; border: 3px solid #ffffff; background: #ff0000; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: #000000; text-shadow: 1px 1px 0px #ffffff;">
+                                    RGB(255, 255, 255)
+                                </div>
+                            </div>
+                            
                             <div class="slider-group">
-                                <label>邻域半径 (Neighborhood Radius):</label>
+                                <label>Neighborhood Radius:</label>
                                 <input type="range" id="slider_neighborhoodRadius" min="10" max="400" step="0.1" oninput="updateParameter('neighborhoodRadius', this.value)">
                                 <span id="value_neighborhoodRadius" class="slider-value">0</span>
                             </div>
                             
                             <div class="slider-group">
-                                <label>正常速度 (Normal Speed):</label>
+                                <label>Normal Speed:</label>
                                 <input type="range" id="slider_normalSpeed" min="0" max="25" step="0.01" oninput="updateParameter('normalSpeed', this.value)">
                                 <span id="value_normalSpeed" class="slider-value">0</span>
                             </div>
                             
                             <div class="slider-group">
-                                <label>最大速度 (Max Speed):</label>
+                                <label>Max Speed:</label>
                                 <input type="range" id="slider_maxSpeed" min="0" max="50" step="0.01" oninput="updateParameter('maxSpeed', this.value)">
                                 <span id="value_maxSpeed" class="slider-value">0</span>
                             </div>
                             
                             <div class="slider-group">
-                                <label>聚集力 C1 (Cohesion):</label>
+                                <label>Cohesion C1:</label>
                                 <input type="range" id="slider_c1" min="0" max="1" step="0.01" oninput="updateParameter('c1', this.value)">
                                 <span id="value_c1" class="slider-value">0</span>
                             </div>
                             
                             <div class="slider-group">
-                                <label>对齐力 C2 (Alignment):</label>
+                                <label>Alignment C2:</label>
                                 <input type="range" id="slider_c2" min="0" max="1" step="0.01" oninput="updateParameter('c2', this.value)">
                                 <span id="value_c2" class="slider-value">0</span>
                             </div>
                             
                             <div class="slider-group">
-                                <label>分离力 C3 (Separation):</label>
+                                <label>Separation C3:</label>
                                 <input type="range" id="slider_c3" min="0" max="100" step="0.01" oninput="updateParameter('c3', this.value)">
                                 <span id="value_c3" class="slider-value">0</span>
                             </div>
                             
                             <div class="slider-group">
-                                <label>随机性 C4 (Randomness):</label>
+                                <label>Randomness C4:</label>
                                 <input type="range" id="slider_c4" min="0" max="1" step="0.01" oninput="updateParameter('c4', this.value)">
                                 <span id="value_c4" class="slider-value">0</span>
                             </div>
                             
                             <div class="slider-group">
-                                <label>速度调节 C5 (Speed Control):</label>
+                                <label>Speed Control C5:</label>
                                 <input type="range" id="slider_c5" min="0" max="1" step="0.01" oninput="updateParameter('c5', this.value)">
                                 <span id="value_c5" class="slider-value">0</span>
                             </div>
                             
                             <div class="debugger-controls">
-                                <button onclick="resetSelectedPopulation()">🔄 重置参数</button>
+                                <button onclick="resetSelectedPopulation()">Reset Parameters</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="control-group">
-                    <h3>🌊 经典SwarmChemistry预设 (第一组)</h3>
+                    <h3>Classic SwarmChemistry Presets (Group 1)</h3>
                     <div class="preset-buttons">
-                        <button onclick="loadPreset('uzushio')">🌀 Uzushio</button>
-                        <button onclick="loadPreset('insurmountable_wall')">🧱 Insurmountable Wall</button>
-                        <button onclick="loadPreset('cell_with_two_nuclei')">🔬 Cell with Two Nuclei</button>
-                        <button onclick="loadPreset('multicellularity')">🧬 Multicellularity</button>
-                        <button onclick="loadPreset('jelly_fish')">🎐 Jelly Fish</button>
-                        <button onclick="loadPreset('no_wait_this_way')">↩️ No, Wait - This Way</button>
-                        <button onclick="loadPreset('recombining_blobs')">🫧 Recombining Blobs</button>
-                        <button onclick="loadPreset('playing_catch')">⚾ Playing Catch</button>
-                        <button onclick="loadPreset('pulsating_eye')">👁️ Pulsating Eye</button>
+                        <button onclick="loadPreset('uzushio')">Uzushio</button>
+                        <button onclick="loadPreset('insurmountable_wall')">Insurmountable Wall</button>
+                        <button onclick="loadPreset('cell_with_two_nuclei')">Cell with Two Nuclei</button>
+                        <button onclick="loadPreset('multicellularity')">Multicellularity</button>
+                        <button onclick="loadPreset('jelly_fish')">Jelly Fish</button>
+                        <button onclick="loadPreset('no_wait_this_way')">No, Wait - This Way</button>
+                        <button onclick="loadPreset('recombining_blobs')">Recombining Blobs</button>
+                        <button onclick="loadPreset('playing_catch')">Playing Catch</button>
+                        <button onclick="loadPreset('pulsating_eye')">Pulsating Eye</button>
                     </div>
                 </div>
                 
                 <div class="control-group">
-                    <h3>🔬 经典SwarmChemistry预设 (第二组)</h3>
+                    <h3>Classic SwarmChemistry Presets (Group 2)</h3>
                     <div class="preset-buttons">
-                        <button onclick="loadPreset('chaos_cells')">🌪️ Chaos Cells</button>
-                        <button onclick="loadPreset('aggressive_predator')">🦈 Aggressive Predator</button>
-                        <button onclick="loadPreset('fast_walker_slow_follower')">🚶‍♂️ Fast Walker & Slow Follower</button>
-                        <button onclick="loadPreset('swinger')">🎭 Swinger</button>
-                        <button onclick="loadPreset('rotary')">⚙️ Rotary</button>
-                        <button onclick="loadPreset('wedding_ring')">💍 Wedding Ring</button>
-                        <button onclick="loadPreset('turbulent_runner')">🏃‍♂️ Turbulent Runner</button>
-                        <button onclick="loadPreset('blobs')">🟢 Blobs</button>
-                        <button onclick="loadPreset('linear_oscillator')">📊 Linear Oscillator</button>
+                        <button onclick="loadPreset('chaos_cells')">Chaos Cells</button>
+                        <button onclick="loadPreset('aggressive_predator')">Aggressive Predator</button>
+                        <button onclick="loadPreset('fast_walker_slow_follower')">Fast Walker & Slow Follower</button>
+                        <button onclick="loadPreset('swinger')">Swinger</button>
+                        <button onclick="loadPreset('rotary')">Rotary</button>
+                        <button onclick="loadPreset('wedding_ring')">Wedding Ring</button>
+                        <button onclick="loadPreset('turbulent_runner')">Turbulent Runner</button>
+                        <button onclick="loadPreset('blobs')">Blobs</button>
+                        <button onclick="loadPreset('linear_oscillator')">Linear Oscillator</button>
                     </div>
                 </div>
                 
                 <div class="control-group">
-                    <h3>📊 当前种群</h3>
+                    <h3>Current Population</h3>
                     <div id="populationDisplay" class="population-display">
-                        点击预设按钮来生成粒子种群...
+                        Click preset buttons to generate particle populations...
                     </div>
                 </div>
             </div>
@@ -571,9 +841,9 @@
     </div>
 
     <script>
-        // SwarmChemistry 云端版 - 与原始Java版本完全一致的算法实现
+        // SwarmChemistry Cloud Edition - Algorithm implementation consistent with original Java version
         
-        // 全局变量
+        // Global variables
         let canvas, ctx;
         let individuals = [];
         let animationId;
@@ -603,10 +873,18 @@
             
             // 根据Java版本的颜色计算规则
             getColor() {
-                const r = Math.floor((this.c1 / 1.0) * 0.8 * 255);
-                const g = Math.floor((this.c2 / 1.0) * 0.8 * 255);
-                const b = Math.floor((this.c3 / 100.0) * 0.8 * 255);
-                return `rgb(${r}, ${g}, ${b})`;
+                // 增强颜色对比度和可见度
+                const r = Math.floor((this.c1 / 1.0) * 255);  // 移除0.8系数，增强亮度
+                const g = Math.floor((this.c2 / 1.0) * 255);  // 移除0.8系数，增强亮度
+                const b = Math.floor((this.c3 / 100.0) * 255); // 移除0.8系数，增强亮度
+                
+                // 确保最小亮度，避免全黑色
+                const minBrightness = 50;
+                const finalR = Math.max(r, minBrightness);
+                const finalG = Math.max(g, minBrightness);
+                const finalB = Math.max(b, minBrightness);
+                
+                return `rgb(${finalR}, ${finalG}, ${finalB})`;
             }
             
             clone() {
@@ -671,8 +949,8 @@
             
             // 设置高DPI支持
             const dpr = window.devicePixelRatio || 1;
-            const displayWidth = 1200;
-            const displayHeight = 900;
+            const displayWidth = 600;
+            const displayHeight = 600;
             
             canvas.width = displayWidth * dpr;
             canvas.height = displayHeight * dpr;
@@ -684,9 +962,9 @@
             initializeSwarm();
             animate();
             
-            console.log('🎮 SwarmChemistry 云端版初始化完成');
-            console.log('🖼️ 画布尺寸: 1200x900');
-            console.log('🌐 服务器地址:', SYNC_CONFIG.serverUrl);
+            console.log('🎮 SwarmChemistry Cloud Edition initialized');
+            console.log('🖼️ Canvas size: 600x600');
+            console.log('🌐 Server URL:', SYNC_CONFIG.serverUrl);
         });
         
         // 事件监听器设置
@@ -731,8 +1009,8 @@
             ];
             
             // 计算画布中心点 - 适应新尺寸
-            const centerX = 1200 / 2;
-            const centerY = 900 / 2;
+            const centerX = 600 / 2;
+            const centerY = 600 / 2;
             const spawnRadius = 80; // 稍微增大生成半径
             
             populations.forEach(pop => {
@@ -881,7 +1159,7 @@
             
             individuals.forEach(individual => {
                 individual.move();
-                individual.wrapAround(1200, 900); // 使用固定画布尺寸
+                individual.wrapAround(600, 600); // 使用固定画布尺寸
             });
         }
         
@@ -889,7 +1167,7 @@
         function render() {
             // 完全清空画布
             ctx.fillStyle = '#000000';
-            ctx.fillRect(0, 0, 1200, 900); // 使用固定画布尺寸
+            ctx.fillRect(0, 0, 600, 600); // 使用固定画布尺寸
             
             // 绘制个体
             individuals.forEach(individual => {
@@ -926,10 +1204,18 @@
             }
         }
         
+        // 帧率控制变量
+        let targetFPS = 30; // 可调节的目标帧率
+        let lastFrameTime = 0;
+        
         // 动画循环
-        function animate() {
-            update();
-            render();
+        function animate(currentTime = 0) {
+            // 帧率控制
+            if (currentTime - lastFrameTime >= 1000 / targetFPS) {
+                update();
+                render();
+                lastFrameTime = currentTime;
+            }
             requestAnimationFrame(animate);
         }
         
@@ -937,6 +1223,7 @@
         let currentPopulations = [];
         let selectedPopulationIndex = -1;
         let originalParameters = null;
+        let selectedPopulationIndividuals = []; // 新增：存储选中种群的个体引用
         
         // 统计和显示种群信息
         function updatePopulationDisplay() {
@@ -951,8 +1238,8 @@
                 }
             });
             
-            let displayText = `总种群数: ${populationStats.size}\n`;
-            displayText += `总粒子数: ${individuals.length}\n\n`;
+            let displayText = `Total population: ${populationStats.size}\n`;
+            displayText += `Total particles: ${individuals.length}\n\n`;
             
             // 构建参数输入栏的同步文本
             let parameterText = '';
@@ -962,7 +1249,7 @@
             
             let index = 1;
             populationStats.forEach((count, params) => {
-                displayText += `种群 ${index}: ${count} * ${params}\n`;
+                displayText += `Population ${index}: ${count} * ${params}\n`;
                 parameterText += `${count} * ${params}\n`;
                 
                 // 解析参数用于调试器
@@ -972,6 +1259,7 @@
                     currentPopulations.push({
                         index: index,
                         count: count,
+                        paramString: params, // 添加参数字符串用于匹配
                         parameters: {
                             neighborhoodRadius: paramValues[0],
                             normalSpeed: paramValues[1],
@@ -989,17 +1277,10 @@
             
             document.getElementById('populationDisplay').textContent = displayText;
             
-            // 实时同步到参数输入栏
+            // 实时同步到参数输入栏（仅在有个体时）
             const parameterInput = document.getElementById('parameterInput');
             if (parameterInput && individuals.length > 0) {
                 parameterInput.value = parameterText.trim();
-                
-                // 显示同步状态
-                showParseStatus(`✅ 已同步当前画布种群参数 (${individuals.length}个粒子)`, 'success');
-                setTimeout(() => {
-                    const statusDiv = document.getElementById('parseStatus');
-                    if (statusDiv) statusDiv.style.display = 'none';
-                }, 3000);
             }
             
             // 更新调试器的种群选择器
@@ -1012,13 +1293,13 @@
             if (!selector) return;
             
             // 清空现有选项
-            selector.innerHTML = '<option value="">请选择种群...</option>';
+            selector.innerHTML = '<option value="">Please select population...</option>';
             
             // 添加种群选项
             currentPopulations.forEach((pop, index) => {
                 const option = document.createElement('option');
                 option.value = index;
-                option.textContent = `种群 ${pop.index} (${pop.count} 个粒子)`;
+                option.textContent = `Population ${pop.index} (${pop.count} particles)`;
                 selector.appendChild(option);
             });
             
@@ -1027,6 +1308,7 @@
                 selector.value = selectedPopulationIndex;
             } else {
                 selectedPopulationIndex = -1;
+                selectedPopulationIndividuals = [];
                 document.getElementById('parameterSliders').style.display = 'none';
             }
         }
@@ -1038,6 +1320,7 @@
             
             if (isNaN(index) || index < 0 || index >= currentPopulations.length) {
                 selectedPopulationIndex = -1;
+                selectedPopulationIndividuals = [];
                 document.getElementById('parameterSliders').style.display = 'none';
                 document.getElementById('populationInfo').textContent = '';
                 return;
@@ -1047,15 +1330,28 @@
             const population = currentPopulations[index];
             originalParameters = { ...population.parameters };
             
+            // 找到属于该种群的所有个体
+            selectedPopulationIndividuals = [];
+            individuals.forEach(individual => {
+                if (individual.parameters.toString() === population.paramString) {
+                    selectedPopulationIndividuals.push(individual);
+                }
+            });
+            
             // 显示种群信息
             document.getElementById('populationInfo').textContent = 
-                `${population.count} 个粒子`;
+                `${selectedPopulationIndividuals.length} particles`;
             
             // 更新滑块值
             updateSliders(population.parameters);
             
             // 显示滑块区域
             document.getElementById('parameterSliders').style.display = 'block';
+            
+            // 更新颜色预览
+            updateColorPreview();
+            
+            console.log(`🎯 Selected population ${population.index} with ${selectedPopulationIndividuals.length} particles`);
         }
         
         // 更新滑块显示
@@ -1075,7 +1371,7 @@
         
         // 更新单个参数
         function updateParameter(paramName, value) {
-            if (selectedPopulationIndex < 0) return;
+            if (selectedPopulationIndex < 0 || selectedPopulationIndividuals.length === 0) return;
             
             const numValue = parseFloat(value);
             const valueSpan = document.getElementById(`value_${paramName}`);
@@ -1086,57 +1382,109 @@
             // 更新当前种群参数
             currentPopulations[selectedPopulationIndex].parameters[paramName] = numValue;
             
+            // 如果是颜色相关参数，显示颜色预览
+            if (['c1', 'c2', 'c3'].includes(paramName)) {
+                const params = currentPopulations[selectedPopulationIndex].parameters;
+                const previewColor = {
+                    c1: params.c1,
+                    c2: params.c2,
+                    c3: params.c3,
+                    getColor: function() {
+                        const r = Math.floor((this.c1 / 1.0) * 255);
+                        const g = Math.floor((this.c2 / 1.0) * 255);
+                        const b = Math.floor((this.c3 / 100.0) * 255);
+                        const minBrightness = 50;
+                        const finalR = Math.max(r, minBrightness);
+                        const finalG = Math.max(g, minBrightness);
+                        const finalB = Math.max(b, minBrightness);
+                        return `rgb(${finalR}, ${finalG}, ${finalB})`;
+                    }
+                };
+                console.log(`🎨 Color parameter ${paramName} changed to ${numValue.toFixed(2)}`);
+                console.log(`🎨 Preview color: ${previewColor.getColor()}`);
+            }
+            
             // 实时应用到个体
             applyParameterChanges();
+            
+            // 更新颜色预览
+            updateColorPreview();
         }
         
         // 应用参数更改
         function applyParameterChanges() {
-            if (selectedPopulationIndex < 0) return;
+            if (selectedPopulationIndex < 0 || selectedPopulationIndividuals.length === 0) return;
             
             const targetParams = currentPopulations[selectedPopulationIndex].parameters;
-            const targetParamStr = `(${targetParams.neighborhoodRadius.toFixed(2)}, ${targetParams.normalSpeed.toFixed(2)}, ${targetParams.maxSpeed.toFixed(2)}, ${targetParams.c1.toFixed(2)}, ${targetParams.c2.toFixed(2)}, ${targetParams.c3.toFixed(2)}, ${targetParams.c4.toFixed(2)}, ${targetParams.c5.toFixed(2)})`;
             
-            // 找到对应的个体并更新参数
-            individuals.forEach(individual => {
-                const currentParamStr = individual.parameters.toString();
+            // 直接更新选中种群的所有个体
+            selectedPopulationIndividuals.forEach(individual => {
+                individual.parameters.neighborhoodRadius = targetParams.neighborhoodRadius;
+                individual.parameters.normalSpeed = targetParams.normalSpeed;
+                individual.parameters.maxSpeed = targetParams.maxSpeed;
+                individual.parameters.c1 = targetParams.c1;
+                individual.parameters.c2 = targetParams.c2;
+                individual.parameters.c3 = targetParams.c3;
+                individual.parameters.c4 = targetParams.c4;
+                individual.parameters.c5 = targetParams.c5;
                 
-                // 检查是否属于当前选中的种群
-                let isTargetPopulation = false;
-                currentPopulations.forEach((pop, index) => {
-                    if (index === selectedPopulationIndex) {
-                        const popParamStr = `(${pop.parameters.neighborhoodRadius.toFixed(2)}, ${pop.parameters.normalSpeed.toFixed(2)}, ${pop.parameters.maxSpeed.toFixed(2)}, ${pop.parameters.c1.toFixed(2)}, ${pop.parameters.c2.toFixed(2)}, ${pop.parameters.c3.toFixed(2)}, ${pop.parameters.c4.toFixed(2)}, ${pop.parameters.c5.toFixed(2)})`;
-                        
-                        // 使用原始参数进行匹配
-                        if (originalParameters) {
-                            const originalParamStr = `(${originalParameters.neighborhoodRadius.toFixed(2)}, ${originalParameters.normalSpeed.toFixed(2)}, ${originalParameters.maxSpeed.toFixed(2)}, ${originalParameters.c1.toFixed(2)}, ${originalParameters.c2.toFixed(2)}, ${originalParameters.c3.toFixed(2)}, ${originalParameters.c4.toFixed(2)}, ${originalParameters.c5.toFixed(2)})`;
-                            if (currentParamStr === originalParamStr) {
-                                isTargetPopulation = true;
-                            }
-                        }
-                    }
-                });
-                
-                if (isTargetPopulation) {
-                    // 更新个体参数
-                    individual.parameters.neighborhoodRadius = targetParams.neighborhoodRadius;
-                    individual.parameters.normalSpeed = targetParams.normalSpeed;
-                    individual.parameters.maxSpeed = targetParams.maxSpeed;
-                    individual.parameters.c1 = targetParams.c1;
-                    individual.parameters.c2 = targetParams.c2;
-                    individual.parameters.c3 = targetParams.c3;
-                    individual.parameters.c4 = targetParams.c4;
-                    individual.parameters.c5 = targetParams.c5;
+                // 强制清除任何可能的颜色缓存
+                if (individual.parameters._cachedColor) {
+                    delete individual.parameters._cachedColor;
                 }
             });
             
-            // 更新显示
-            updatePopulationDisplay();
+            // 更新显示（但不重新构建种群列表，避免循环）
+            updateParameterInputOnly();
+            
+            // 添加颜色调试信息
+            if (selectedPopulationIndividuals.length > 0) {
+                const sampleColor = selectedPopulationIndividuals[0].parameters.getColor();
+                console.log(`🎨 Color updated for ${selectedPopulationIndividuals.length} particles`);
+                console.log(`🎨 New color: ${sampleColor} (c1=${targetParams.c1.toFixed(2)}, c2=${targetParams.c2.toFixed(2)}, c3=${targetParams.c3.toFixed(2)})`);
+            }
+            
+            console.log(`🔧 Applied parameter changes to ${selectedPopulationIndividuals.length} particles`);
+        }
+        
+        // 仅更新参数输入框，不重建种群列表
+        function updateParameterInputOnly() {
+            const populationStats = new Map();
+            
+            individuals.forEach(individual => {
+                const paramStr = individual.parameters.toString();
+                if (populationStats.has(paramStr)) {
+                    populationStats.set(paramStr, populationStats.get(paramStr) + 1);
+                } else {
+                    populationStats.set(paramStr, 1);
+                }
+            });
+            
+            let displayText = `Total population: ${populationStats.size}\n`;
+            displayText += `Total particles: ${individuals.length}\n\n`;
+            
+            // 构建参数输入栏的同步文本
+            let parameterText = '';
+            
+            let index = 1;
+            populationStats.forEach((count, params) => {
+                displayText += `Population ${index}: ${count} * ${params}\n`;
+                parameterText += `${count} * ${params}\n`;
+                index++;
+            });
+            
+            document.getElementById('populationDisplay').textContent = displayText;
+            
+            // 实时同步到参数输入栏
+            const parameterInput = document.getElementById('parameterInput');
+            if (parameterInput && individuals.length > 0) {
+                parameterInput.value = parameterText.trim();
+            }
         }
         
         // 重置选中种群参数
         function resetSelectedPopulation() {
-            if (selectedPopulationIndex < 0 || !originalParameters) return;
+            if (selectedPopulationIndex < 0 || !originalParameters || selectedPopulationIndividuals.length === 0) return;
             
             // 恢复原始参数
             currentPopulations[selectedPopulationIndex].parameters = { ...originalParameters };
@@ -1146,6 +1494,11 @@
             
             // 应用更改
             applyParameterChanges();
+            
+            // 更新颜色预览
+            updateColorPreview();
+            
+            console.log(`🔄 Reset parameters for ${selectedPopulationIndividuals.length} particles`);
         }
         
         // 预设配置 - 经典SwarmChemistry预设
@@ -1260,8 +1613,8 @@
             const presetData = presets[presetName];
             
             // 计算画布中心点 - 适应新尺寸
-            const centerX = 1200 / 2;
-            const centerY = 900 / 2;
+            const centerX = 600 / 2;
+            const centerY = 600 / 2;
             const spawnRadius = 80;
             
             presetData.forEach((pop, index) => {
@@ -1294,7 +1647,7 @@
                 startSimulation();
             }
             
-            console.log(`🎯 加载预设: ${presetName}, 总粒子数: ${individuals.length}`);
+            console.log(`🎯 Loaded preset: ${presetName}, Total particles: ${individuals.length}`);
         }
         
         // 控制函数
@@ -1330,11 +1683,11 @@
             const input = document.getElementById('parameterInput').value.trim();
             
             if (!input) {
-                showParseStatus('请输入参数！', 'error');
+                showParseStatus('Please enter parameters! / 请输入参数！', 'error');
                 return;
             }
             
-            showParseStatus('🔍 正在解析参数...', 'info');
+            showParseStatus('🔍 Parsing parameters... / 正在解析参数...', 'info');
             
             try {
                 const lines = input.split('\n').filter(line => line.trim());
@@ -1342,8 +1695,8 @@
                 let totalParsed = 0;
                 
                 // 计算画布中心点
-                const centerX = 1200 / 2;
-                const centerY = 900 / 2;
+                const centerX = 600 / 2;
+                const centerY = 600 / 2;
                 const spawnRadius = 80;
                 
                 lines.forEach((line, index) => {
@@ -1379,15 +1732,15 @@
                             
                             totalParsed += count;
                         } else {
-                            throw new Error(`第 ${index + 1} 行参数格式错误：需要8个数值参数`);
+                            throw new Error(`Line ${index + 1} parameter format error: requires 8 numeric parameters / 第 ${index + 1} 行参数格式错误：需要8个数值参数`);
                         }
                     } else {
-                        throw new Error(`第 ${index + 1} 行格式错误：应为 "数量 * (参数1, 参数2, ...参数8)"`);
+                        throw new Error(`Line ${index + 1} format error: should be "count * (param1, param2, ...param8)" / 第 ${index + 1} 行格式错误：应为 "数量 * (参数1, 参数2, ...参数8)"`);
                     }
                 });
                 
                 if (individuals.length === 0) {
-                    throw new Error('没有找到有效的参数行');
+                    throw new Error('No valid parameter lines found / 没有找到有效的参数行');
                 }
                 
                 updatePopulationDisplay();
@@ -1397,19 +1750,19 @@
                     startSimulation();
                 }
                 
-                showParseStatus(`✅ 解析成功！创建了 ${totalParsed} 个粒子`, 'success');
-                console.log(`📝 自定义参数解析成功: ${totalParsed} 个粒子`);
+                showParseStatus(`✅ Parse successful! Created ${totalParsed} particles`, 'success');
+                console.log(`📝 Custom parameters parsed successfully: ${totalParsed} particles`);
                 
             } catch (error) {
-                console.error('❌ 参数解析失败:', error);
-                showParseStatus(`❌ 解析失败: ${error.message}`, 'error');
+                console.error('❌ Parameter parsing failed:', error);
+                showParseStatus(`❌ Parse failed: ${error.message}`, 'error');
             }
         }
         
         // 清空参数输入
         function clearParameters() {
             document.getElementById('parameterInput').value = '';
-            showParseStatus('输入已清空', 'info');
+            showParseStatus('Input cleared', 'info');
             setTimeout(() => {
                 document.getElementById('parseStatus').style.display = 'none';
             }, 2000);
@@ -1432,11 +1785,11 @@
         // 同步到Unity
         async function syncToUnity() {
             if (individuals.length === 0) {
-                showSyncStatus('请先选择一个预设或输入参数！', 'error');
+                showSyncStatus('Please select a preset or input parameters first!', 'error');
                 return;
             }
             
-            showSyncStatus('🚀 正在同步到Unity...', 'info');
+            showSyncStatus('🚀 Syncing to Unity...', 'info');
             
             try {
                 // 收集种群数据
@@ -1483,7 +1836,7 @@
                     source: 'SwarmChemistry Web Cloud'
                 };
                 
-                console.log('📤 发送数据到服务器:', swarmData);
+                console.log('📤 Sending data to server:', swarmData);
                 
                 const response = await fetch(SYNC_CONFIG.serverUrl + '/swarm-data', {
                     method: 'POST',
@@ -1496,15 +1849,15 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    showSyncStatus(`✅ 同步成功！数据ID: ${result.dataId}`, 'success');
-                    console.log('✅ 同步成功:', result);
+                    showSyncStatus(`✅ Sync successful! Data ID: ${result.dataId}`, 'success');
+                    console.log('✅ Sync successful:', result);
                 } else {
-                    throw new Error(result.message || '同步失败');
+                    throw new Error(result.message || 'Sync failed');
                 }
                 
             } catch (error) {
-                console.error('❌ 同步失败:', error);
-                showSyncStatus(`❌ 同步失败: ${error.message}`, 'error');
+                console.error('❌ Sync failed:', error);
+                showSyncStatus(`❌ Sync failed: ${error.message}`, 'error');
             }
         }
         
@@ -1522,8 +1875,38 @@
             }
         }
         
-        console.log('🌐 SwarmChemistry 云端版加载完成');
-        console.log('🔗 API端点:', SYNC_CONFIG.serverUrl);
+        console.log('🌐 SwarmChemistry Cloud Edition loaded');
+        console.log('🔗 API endpoint:', SYNC_CONFIG.serverUrl);
+        
+        // 更新颜色预览
+        function updateColorPreview() {
+            if (selectedPopulationIndex < 0) return;
+            
+            const params = currentPopulations[selectedPopulationIndex].parameters;
+            const colorPreview = document.getElementById('colorPreview');
+            
+            if (colorPreview) {
+                // 计算颜色
+                const r = Math.floor((params.c1 / 1.0) * 255);
+                const g = Math.floor((params.c2 / 1.0) * 255);
+                const b = Math.floor((params.c3 / 100.0) * 255);
+                const minBrightness = 50;
+                const finalR = Math.max(r, minBrightness);
+                const finalG = Math.max(g, minBrightness);
+                const finalB = Math.max(b, minBrightness);
+                
+                const colorString = `rgb(${finalR}, ${finalG}, ${finalB})`;
+                
+                // 更新预览块
+                colorPreview.style.background = colorString;
+                colorPreview.textContent = `RGB(${finalR}, ${finalG}, ${finalB})`;
+                
+                // 根据背景亮度调整文字颜色
+                const brightness = (finalR * 299 + finalG * 587 + finalB * 114) / 1000;
+                colorPreview.style.color = brightness > 128 ? '#000000' : '#ffffff';
+                colorPreview.style.textShadow = brightness > 128 ? '1px 1px 0px #ffffff' : '1px 1px 0px #000000';
+            }
+        }
     </script>
 </body>
 </html> 
