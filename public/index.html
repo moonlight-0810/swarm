@@ -700,6 +700,103 @@
             image-rendering: -moz-crisp-edges;
             image-rendering: crisp-edges;
         }
+        
+        
+        .livestream-wrapper {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 宽高比 */
+            margin-bottom: 15px;
+            overflow: hidden;
+            border: 3px solid #06ffa5;
+            box-shadow: 
+                0 0 0 3px #3a86ff,
+                inset 0 0 20px rgba(6, 255, 165, 0.1);
+        }
+        
+        .livestream-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000000;
+        }
+        
+        .livestream-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+        
+        .livestream-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .overlay-content {
+            text-align: center;
+            color: #00ff00;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .overlay-content h4 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #ff006e;
+            text-shadow: 2px 2px 0px #000000;
+        }
+        
+        .overlay-content p {
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: #06ffa5;
+        }
+        
+        .play-livestream-btn {
+            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
+            border: 3px solid #00ff00 !important;
+            color: #ffffff !important;
+            padding: 15px 25px !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            border-radius: 0 !important;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .play-livestream-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 0 #662dbc,
+                0 12px 20px rgba(255, 0, 110, 0.6);
+            animation: none;
+        }
+        
+
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -722,7 +819,26 @@
             
             <div class="controls-section">
                 <div class="control-group">
-                    <h3>Sync to Unity</h3>
+                    <div class="youtube-livestream-container">
+                        <div class="livestream-wrapper" id="livestreamWrapper">
+                            <iframe 
+                                id="youtubeFrame" 
+                                src="https://www.youtube.com/embed/rC_JmB3uaPk?autoplay=0&mute=1&controls=1&showinfo=1&rel=0&modestbranding=1&cc_load_policy=1" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen
+                                title="YouTube 直播视频">
+                            </iframe>
+                            <div class="livestream-overlay" id="livestreamOverlay">
+                                <div class="overlay-content">
+                                    <button onclick="startLivestream()" class="play-livestream-btn">▶️ Start</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
                     <button class="sync-button" onclick="syncToUnity()">Sync to Unity</button>
                     <div id="syncStatus" class="sync-status" style="display: none;"></div>
                 </div>
@@ -1923,6 +2039,33 @@
                 colorPreview.style.textShadow = brightness > 128 ? '1px 1px 0px #ffffff' : '1px 1px 0px #000000';
             }
         }
+        
+        // YouTube直播控制功能
+        let isLivestreamPlaying = false;
+        
+        // 开始观看直播
+        function startLivestream() {
+            const overlay = document.getElementById('livestreamOverlay');
+            
+            overlay.classList.add('hidden');
+            isLivestreamPlaying = true;
+            
+            console.log('🎥 YouTube直播已开始');
+        }
+        
+        // 添加滑入滑出动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html> 
