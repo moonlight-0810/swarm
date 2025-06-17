@@ -618,7 +618,23 @@
         }
         
         /* 响应式设计 */
-        @media (max-width: 1600px) {
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 550px 1fr;
+                gap: 20px;
+            }
+            
+            .controls-section {
+                max-height: none;
+            }
+            
+            canvas {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+        
+        @media (max-width: 900px) {
             .main-layout {
                 grid-template-columns: 1fr;
                 gap: 20px;
