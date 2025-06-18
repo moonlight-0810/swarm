@@ -855,11 +855,18 @@
         }
         
         .concept-content {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 60px 40px;
             text-align: center;
             pointer-events: none;
+        }
+        
+        .concept-dual-text {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            margin-bottom: 40px;
         }
         
         .concept-text {
@@ -870,13 +877,38 @@
             text-shadow: 
                 1px 1px 0px #000000,
                 2px 2px 5px rgba(0, 255, 0, 0.3);
-            margin-bottom: 40px;
+            flex: 1;
+        }
+        
+        .concept-text-en {
+            border-right: 3px solid #06ffa5;
+            padding-right: 30px;
+            flex: 2;
+        }
+        
+        .concept-text-zh {
+            border-left: 3px solid #ff006e;
+            padding-left: 30px;
+            flex: 1;
         }
         
         .concept-text p {
             margin-bottom: 25px;
             text-align: justify;
             text-justify: inter-word;
+        }
+        
+        .concept-lang-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #8338ec;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 
+                1px 1px 0px #000000,
+                2px 2px 5px rgba(131, 56, 236, 0.5);
         }
         
         .concept-text strong {
@@ -918,6 +950,27 @@
         }
         
         /* 响应式设计 - 概念文字 */
+        @media (max-width: 1024px) {
+            .concept-dual-text {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .concept-text-en {
+                border-right: none;
+                border-bottom: 3px solid #06ffa5;
+                padding-right: 0;
+                padding-bottom: 20px;
+            }
+            
+            .concept-text-zh {
+                border-left: none;
+                border-top: 3px solid #ff006e;
+                padding-left: 0;
+                padding-top: 20px;
+            }
+        }
+        
         @media (max-width: 768px) {
             .concept-content {
                 padding: 40px 20px;
@@ -932,6 +985,10 @@
             .concept-footer p {
                 font-size: 12px;
             }
+            
+            .concept-dual-text {
+                gap: 25px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -942,6 +999,15 @@
             .concept-text {
                 font-size: 13px;
                 line-height: 1.5;
+            }
+            
+            .concept-dual-text {
+                gap: 20px;
+            }
+            
+            .concept-lang-label {
+                font-size: 12px;
+                margin-bottom: 15px;
             }
         }
         
@@ -1047,12 +1113,26 @@
     <!-- 概念文字全屏显示 -->
     <div id="conceptOverlay" class="concept-overlay">
         <div class="concept-content">
-            <div class="concept-text" id="conceptText">
-                <p data-lang-key="concept_p1">The contemporary <strong>"anti-anthropocentric"</strong> movement views humans as ecological destroyers, urging us to reflect on the harm done to nature. However, it often falls into the extreme of denying human value and responsibility. Since the Industrial Revolution, anthropocentrism has led to severe consequences such as climate change and biodiversity loss, giving rise to new ethical frameworks like animal rights and Earth law, as well as global climate protests and "climate anxiety." This reflects humanity's desire to break free from its "central" position, while still struggling with a logic rooted in its own survival, exemplifying a "regretful awakening." <strong>We aim to find an entry point for redefining human value between "anthropocentrism" and "anti-anthropocentrism."</strong></p>
+            <div class="concept-dual-text">
+                <!-- 英文版本 -->
+                <div class="concept-text concept-text-en">
+                    <div class="concept-lang-label">English</div>
+                    <p>In contemporary 'post-anthropocentrism' thought, many view humans as the primary destroyers of nature, prompting a deep reflection on the environmental impacts of human activities. However, this critique often becomes extreme, overlooking the unique role and responsibility humans may have in the natural order. Since the Industrial Revolution, issues such as climate change and biodiversity loss have intensified, forcing us to redefine our relationship with nature.</p>
+                    
+                    <p>Yet, <strong>humans are not merely creators of ecological crises—we also have the ability to repair and reshape the world. Human consciousness, as a singular point in natural evolution, possesses the power to predict, create, and reflect.</strong> As philosopher Hans Jonas suggested, technological progress amplifies the impact of human actions, thus increasing our ethical responsibility. We are capable not only of destroying nature but also of creating new orders.</p>
+                    
+                    <p>In this project, you will become a <strong>'rule setter', intervening in the evolution of a complex system to shape a dynamic natural order.</strong> You can design and adjust parameters, placing them within a grand evolutionary landscape, and collaborate with players from around the world to shape the future of ecological order. This is not just a technical computation—it represents how collective consciousness can intervene in the generation of natural order, reminding us that through the fusion of consciousness and technology, we have the power to restore nature and create a new future.</p>
+                </div>
                 
-                <p data-lang-key="concept_p2">However, <strong>excessive self-deprecation weakens humanity's moral responsibility and unique role. Human consciousness is a singularity in natural evolution, with the ability to predict, construct, and reflect. Not only does it create ecological crises, but it can also shape new orders.</strong> Philosopher Hans Jonas emphasized that technology amplifies the impact of human actions and deepens ethical responsibility. Humans should be redefined as participants and collaborators in the cosmic order.</p>
-                
-                <p data-lang-key="concept_p3">Based on this, this project uses complex systems to simulate the evolution of the cosmic order, with <strong>humans acting as "rule-setters" to intervene in the evolution of complex systems through consciousness.</strong> The CLIP model is introduced to simulate human-like perception, creating a feedback loop between language and images, reflecting the distribution of consciousness in the relationship network between humans and the environment. The project invites multiple participants from different backgrounds to set rules, generating diverse systems, and their interactions shape a dynamic evolutionary landscape. This is not only an algorithmic result but also a symbol of collective consciousness intervening in the generation of order, demonstrating humanity's potential to repair nature and create a new future through consciousness and technology.</p>
+                <!-- 中文版本 -->
+                <div class="concept-text concept-text-zh">
+                    <div class="concept-lang-label">中文</div>
+                    <p>在当代'去人类中心主义'思潮中，很多人认为人类是自然的破坏者，这促使我们深刻反思人类活动对环境的影响。然而，这种批判往往过于极端，忽视了人类在自然秩序中独特的角色和责任。自工业革命以来，气候变化、生物多样性丧失等问题不断加剧，迫使我们重新定义与自然的关系。</p>
+                    
+                    <p><strong>但人类并非仅是生态危机的制造者，我们同样具备修复和重塑的能力。人类意识作为自然演化中的奇点，具备预测、创造和反思的力量。</strong>正如哲学家汉斯·约纳斯所说，技术的进步扩大了人类行为的影响，也意味着我们肩负更大的伦理责任。我们不仅可以破坏自然，更能创造新秩序。</p>
+                    
+                    <p>在这个项目中，你将成为<strong>'规则设定者'，通过干预复杂系统的演化，塑造一个动态的自然秩序。</strong>你可以设计并调整参数，将其放入一个宏大的演化景观中，与来自世界各地的其他玩家共同塑造未来的生态秩序。这不仅仅是技术的运算，它代表了群体意识如何共同介入自然秩序的生成，让我们重新认识到：通过意识与技术的结合，我们有能力修复自然，创造一个全新的未来。</p>
+                </div>
             </div>
             
             <div class="concept-footer">
@@ -1082,7 +1162,7 @@
                     <button onclick="startSimulation()" data-lang-key="btn_start">Start</button>
                     <button onclick="pauseSimulation()" data-lang-key="btn_pause">Pause</button>
                     <button onclick="resetView()" data-lang-key="btn_reset">Reset</button>
-                    <button class="sync-button" onclick="syncToUnity()" data-lang-key="btn_sync">Sync to Unity</button>
+                    <button class="sync-button" onclick="syncToUnity()" data-lang-key="btn_sync">Sync to the Living World</button>
                 </div>
                 <div id="syncStatus" class="sync-status" style="display: none;"></div>
             </div>
@@ -1196,7 +1276,7 @@
 
                 
                 <div class="control-group">
-                    <h3 data-lang-key="step4_title">4. Ready? Click the "Sync to Unity" button on the left to upload your created digital life into a larger world!</h3>
+                    <h3 data-lang-key="step4_title">4. Ready? Click the "Sync to the Living World" button on the left to upload your created digital life into a larger world!</h3>
                     <div class="youtube-livestream-container">
                         <div class="livestream-wrapper" id="livestreamWrapper">
                             <iframe 
@@ -1232,11 +1312,11 @@
                 btn_start: "Start",
                 btn_pause: "Pause", 
                 btn_reset: "Reset",
-                btn_sync: "Sync to Unity",
+                btn_sync: "Sync to the Living World",
                 step1_title: "1. Click the button to try the classic digital life example.",
                 step2_title: "2. The parameters below represent the underlying rules of the digital life on the left. Manually modify the parameters to create your unique digital life.",
                 step3_title: "3. Adjust the progress bar to choose parameters and build your digital life.",
-                step4_title: "4. Ready? Click the \"Sync to Unity\" button on the left to upload your created digital life into a larger world!",
+                step4_title: "4. Ready? Click the \"Sync to the Living World\" button on the left to upload your created digital life into a larger world!",
                 preset_uzushio: "Uzushio",
                 preset_wall: "Insurmountable Wall",
                 preset_cell: "Cell with Two Nuclei",
@@ -1276,11 +1356,11 @@
                 btn_start: "开始",
                 btn_pause: "暂停",
                 btn_reset: "重置",
-                btn_sync: "同步到Unity",
+                btn_sync: "同步到生命世界",
                 step1_title: "1. 点击按钮尝试经典的数字生命样例。",
                 step2_title: "2. 下方参数代表左侧数字生命的底层规则。手动修改参数，创造你独特的数字生命。",
                 step3_title: "3. 调整进度条选择参数，构建你的数字生命。",
-                step4_title: "4. 准备好了吗？点击左侧\"同步到Unity\"按钮，将你创造的数字生命上传到更大的世界中！",
+                step4_title: "4. 准备好了吗？点击左侧\"同步到生命世界\"按钮，将你创造的数字生命上传到更大的世界中！",
                 preset_uzushio: "漩涡",
                 preset_wall: "不可逾越之壁",
                 preset_cell: "双核细胞",
