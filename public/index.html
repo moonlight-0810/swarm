@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwarmChemistry - Cloud Edition</title>
+    
+    <!-- ONNX.js for AI embedding generation -->
+    <script src="https://cdn.jsdelivr.net/npm/onnxjs/dist/onnx.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
         
@@ -16,14 +19,14 @@
         body {
             font-family: 'JetBrains Mono', 'Courier New', monospace;
             background: #0a0a0a;
-            color: #00ff00;
+            color: #7fb069;
             min-height: 100vh;
             overflow-x: auto;
             image-rendering: pixelated;
             background-image: 
-                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(120, 255, 198, 0.2) 0%, transparent 50%);
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(120, 255, 198, 0.1) 0%, transparent 50%);
         }
         
         .container {
@@ -35,16 +38,16 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
-            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            background: linear-gradient(45deg, #c8526d, #7d5fb8, #5b8fd8, #5fbfa3);
             background-size: 400% 400%;
             animation: gradientShift 3s ease infinite;
             padding: 20px;
-            border: 3px solid #00ff00;
+            border: 3px solid #7fb069;
             border-radius: 0;
             box-shadow: 
-                0 0 0 3px #ff006e,
-                0 0 0 6px #8338ec,
-                0 0 20px rgba(0, 255, 0, 0.5);
+                0 0 0 3px #c8526d,
+                0 0 0 6px #7d5fb8,
+                0 0 20px rgba(127, 176, 105, 0.3);
             position: relative;
         }
         
@@ -53,18 +56,18 @@
             top: 20px;
             right: 20px;
             background: #000000;
-            border: 3px solid #06ffa5;
+            border: 3px solid #5fbfa3;
             padding: 8px 12px;
             border-radius: 0;
             z-index: 100;
             box-shadow: 
-                0 0 0 3px #ff006e,
-                0 0 15px rgba(6, 255, 165, 0.5);
+                0 0 0 3px #c8526d,
+                0 0 15px rgba(95, 191, 163, 0.3);
         }
         
         .language-selector select {
             background: #000000;
-            color: #00ff00;
+            color: #7fb069;
             border: none;
             font-family: 'JetBrains Mono', monospace;
             font-size: 14px;
@@ -76,7 +79,7 @@
         
         .language-selector select option {
             background: #000000;
-            color: #00ff00;
+            color: #7fb069;
             padding: 5px;
         }
         
@@ -99,15 +102,15 @@
             color: #ffffff;
             text-shadow: 
                 2px 2px 0px #000000,
-                4px 4px 0px #ff006e,
-                6px 6px 0px #8338ec;
+                4px 4px 0px #c8526d,
+                6px 6px 0px #7d5fb8;
             font-weight: 700;
             letter-spacing: 2px;
         }
         
         .concept-header-btn {
-            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
-            border: 3px solid #00ff00 !important;
+            background: linear-gradient(45deg, #c8526d, #7d5fb8) !important;
+            border: 3px solid #7fb069 !important;
             color: #ffffff !important;
             padding: 15px 25px !important;
             font-size: 16px !important;
@@ -121,33 +124,33 @@
             overflow: hidden;
             animation: conceptHeaderPulse 3s ease-in-out infinite;
             box-shadow: 
-                0 4px 0 #662dbc,
-                0 8px 15px rgba(255, 0, 110, 0.4) !important;
+                0 4px 0 #6a4c96,
+                0 8px 15px rgba(200, 82, 109, 0.25) !important;
         }
         
         .concept-header-btn:hover {
             transform: translateY(-3px) scale(1.05) !important;
             box-shadow: 
-                0 7px 0 #662dbc,
-                0 15px 25px rgba(255, 0, 110, 0.8) !important;
+                0 7px 0 #6a4c96,
+                0 15px 25px rgba(200, 82, 109, 0.4) !important;
             animation: none !important;
         }
         
         .concept-header-btn:active {
             transform: translateY(1px) scale(1.02) !important;
             box-shadow: 
-                0 3px 0 #662dbc,
-                0 6px 12px rgba(255, 0, 110, 0.6) !important;
+                0 3px 0 #6a4c96,
+                0 6px 12px rgba(200, 82, 109, 0.3) !important;
         }
         
         @keyframes conceptHeaderPulse {
             0%, 100% { 
                 transform: scale(1);
-                box-shadow: 0 4px 0 #662dbc, 0 8px 15px rgba(255, 0, 110, 0.4);
+                box-shadow: 0 4px 0 #6a4c96, 0 8px 15px rgba(200, 82, 109, 0.25);
             }
             50% { 
                 transform: scale(1.03);
-                box-shadow: 0 6px 0 #662dbc, 0 12px 20px rgba(255, 0, 110, 0.6);
+                box-shadow: 0 6px 0 #6a4c96, 0 12px 20px rgba(200, 82, 109, 0.35);
             }
         }
         
@@ -167,12 +170,12 @@
         
         .canvas-section {
             background: #1a1a1a;
-            border: 4px solid #00ff00;
+            border: 4px solid #7fb069;
             padding: 25px;
             box-shadow: 
-                0 0 0 4px #ff006e,
-                0 0 0 8px #8338ec,
-                0 0 30px rgba(0, 255, 0, 0.3);
+                0 0 0 4px #c8526d,
+                0 0 0 8px #7d5fb8,
+                0 0 30px rgba(127, 176, 105, 0.2);
             position: relative;
         }
         
@@ -183,19 +186,19 @@
             left: -4px;
             right: -4px;
             bottom: -4px;
-            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            background: linear-gradient(45deg, #c8526d, #7d5fb8, #5b8fd8, #5fbfa3);
             z-index: -1;
             border-radius: 0;
         }
         
         .controls-section {
             background: #1a1a1a;
-            border: 4px solid #ff006e;
+            border: 4px solid #c8526d;
             padding: 25px;
             box-shadow: 
-                0 0 0 4px #00ff00,
-                0 0 0 8px #8338ec,
-                0 0 30px rgba(255, 0, 110, 0.3);
+                0 0 0 4px #7fb069,
+                0 0 0 8px #7d5fb8,
+                0 0 30px rgba(200, 82, 109, 0.2);
             height: 850px;
             overflow-y: auto;
             position: relative;
@@ -208,19 +211,19 @@
             left: -4px;
             right: -4px;
             bottom: -4px;
-            background: linear-gradient(135deg, #8338ec, #3a86ff, #06ffa5, #ff006e);
+            background: linear-gradient(135deg, #7d5fb8, #5b8fd8, #5fbfa3, #c8526d);
             z-index: -1;
         }
         
         canvas {
-            border: 4px solid #06ffa5;
+            border: 4px solid #5fbfa3;
             background: #000;
             display: block;
             margin: 0 auto;
             box-shadow: 
-                0 0 0 4px #3a86ff,
-                0 0 20px rgba(6, 255, 165, 0.5),
-                inset 0 0 50px rgba(6, 255, 165, 0.1);
+                0 0 0 4px #5b8fd8,
+                0 0 20px rgba(95, 191, 163, 0.3),
+                inset 0 0 50px rgba(95, 191, 163, 0.05);
             image-rendering: pixelated;
         }
         
@@ -235,7 +238,7 @@
         .control-group {
             margin-bottom: 25px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #8338ec;
+            border-bottom: 2px solid #7d5fb8;
             position: relative;
         }
         
@@ -251,14 +254,14 @@
             left: 0;
             width: 100%;
             height: 2px;
-            background: linear-gradient(90deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            background: linear-gradient(90deg, #c8526d, #7d5fb8, #5b8fd8, #5fbfa3);
             animation: gradientShift 2s ease infinite;
         }
         
         .control-group h3 {
             margin: 0 0 15px 0;
             font-size: 18px;
-            color: #06ffa5;
+            color: #5fbfa3;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -272,11 +275,11 @@
         .step-main-title {
             margin: 0 0 12px 0 !important;
             font-size: 20px !important;
-            color: #ff006e !important;
+            color: #c8526d !important;
             font-weight: 700 !important;
             font-style: normal !important;
             text-shadow: 2px 2px 0px #000000 !important;
-            border-left: 4px solid #ff006e !important;
+            border-left: 4px solid #c8526d !important;
             padding-left: 12px !important;
             animation: mainTitlePulse 3s ease-in-out infinite !important;
             text-transform: none !important;
@@ -288,7 +291,7 @@
         .step-subtitle {
             margin: 0 0 20px 0;
             font-size: 16px;
-            color: #06ffa5;
+            color: #5fbfa3;
             font-weight: 600;
             font-style: normal;
             text-shadow: 1px 1px 0px #000000;
@@ -312,16 +315,16 @@
         .divider-line {
             flex: 1;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #8338ec, transparent);
+            background: linear-gradient(90deg, transparent, #7d5fb8, transparent);
         }
         
         .divider-text {
-            color: #8338ec;
+            color: #7d5fb8;
             font-weight: 700;
             font-size: 14px;
             padding: 8px 15px;
             background: #1a1a1a;
-            border: 2px solid #8338ec;
+            border: 2px solid #7d5fb8;
             border-radius: 0;
             text-shadow: 1px 1px 0px #000000;
             letter-spacing: 1px;
@@ -347,99 +350,99 @@
         
         /* 默认按钮 - 绿色 */
         button {
-            background: #06ffa5;
-            border-color: #00ff00;
+            background: #5fbfa3;
+            border-color: #7fb069;
             box-shadow: 
-                0 4px 0 #00cc82,
-                0 8px 15px rgba(6, 255, 165, 0.4);
+                0 4px 0 #4da382,
+                0 8px 15px rgba(95, 191, 163, 0.25);
         }
         
         button:hover {
             transform: translateY(-2px);
             box-shadow: 
-                0 6px 0 #00cc82,
-                0 12px 20px rgba(6, 255, 165, 0.6);
+                0 6px 0 #4da382,
+                0 12px 20px rgba(95, 191, 163, 0.35);
         }
         
         button:active {
             transform: translateY(2px);
             box-shadow: 
-                0 2px 0 #00cc82,
-                0 4px 10px rgba(6, 255, 165, 0.4);
+                0 2px 0 #4da382,
+                0 4px 10px rgba(95, 191, 163, 0.25);
         }
         
         /* Canvas控制按钮 - 不同颜色 */
         .canvas-controls button:nth-child(1) {
-            background: #ff006e;
-            border-color: #ff1744;
+            background: #c8526d;
+            border-color: #d45675;
             color: #ffffff;
             box-shadow: 
-                0 4px 0 #cc0055,
-                0 8px 15px rgba(255, 0, 110, 0.4);
+                0 4px 0 #a3425c,
+                0 8px 15px rgba(200, 82, 109, 0.25);
         }
         
         .canvas-controls button:nth-child(1):hover {
             box-shadow: 
-                0 6px 0 #cc0055,
-                0 12px 20px rgba(255, 0, 110, 0.6);
+                0 6px 0 #a3425c,
+                0 12px 20px rgba(200, 82, 109, 0.35);
         }
         
         .canvas-controls button:nth-child(2) {
-            background: #ffbe0b;
-            border-color: #ffc107;
+            background: #d2a841;
+            border-color: #d4b246;
             color: #000000;
             box-shadow: 
-                0 4px 0 #cc9808,
-                0 8px 15px rgba(255, 190, 11, 0.4);
+                0 4px 0 #a88735,
+                0 8px 15px rgba(210, 168, 65, 0.25);
         }
         
         .canvas-controls button:nth-child(2):hover {
             box-shadow: 
-                0 6px 0 #cc9808,
-                0 12px 20px rgba(255, 190, 11, 0.6);
+                0 6px 0 #a88735,
+                0 12px 20px rgba(210, 168, 65, 0.35);
         }
         
         .canvas-controls button:nth-child(3) {
-            background: #3a86ff;
-            border-color: #4dabf7;
+            background: #5b8fd8;
+            border-color: #6b9ddb;
             color: #ffffff;
             box-shadow: 
-                0 4px 0 #2e6bcc,
-                0 8px 15px rgba(58, 134, 255, 0.4);
+                0 4px 0 #4a76b0,
+                0 8px 15px rgba(91, 143, 216, 0.25);
         }
         
         .canvas-controls button:nth-child(3):hover {
             box-shadow: 
-                0 6px 0 #2e6bcc,
-                0 12px 20px rgba(58, 134, 255, 0.6);
+                0 6px 0 #4a76b0,
+                0 12px 20px rgba(91, 143, 216, 0.35);
         }
         
         .canvas-controls .sync-button {
-            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
-            border-color: #00ff00 !important;
+            background: linear-gradient(45deg, #c8526d, #7d5fb8) !important;
+            border-color: #7fb069 !important;
             color: #ffffff !important;
             font-weight: 700 !important;
             font-size: 14px !important;
             padding: 12px 20px !important;
             animation: pulse 2s ease-in-out infinite !important;
             box-shadow: 
-                0 4px 0 #662dbc,
-                0 8px 20px rgba(255, 0, 110, 0.6) !important;
+                0 4px 0 #6a4c96,
+                0 8px 20px rgba(200, 82, 109, 0.3) !important;
         }
         
         .canvas-controls .sync-button:hover {
             animation: none !important;
             transform: translateY(-3px) !important;
             box-shadow: 
-                0 7px 0 #662dbc,
-                0 15px 25px rgba(255, 0, 110, 0.8) !important;
+                0 7px 0 #6a4c96,
+                0 15px 25px rgba(200, 82, 109, 0.4) !important;
         }
         
         .canvas-controls .sync-button:active {
             transform: translateY(2px) !important;
             box-shadow: 
-                0 2px 0 #662dbc,
-                0 4px 10px rgba(255, 0, 110, 0.4) !important;
+                0 2px 0 #6a4c96,
+                0 4px 10px rgba(200, 82, 109, 0.25) !important;
         }
         
         /* 预设按钮网格 */
@@ -450,62 +453,62 @@
         }
         
         .preset-buttons button:nth-child(odd) {
-            background: #ff006e;
-            border-color: #ff1744;
+            background: #c8526d;
+            border-color: #d45675;
             color: #ffffff;
             box-shadow: 
-                0 4px 0 #cc0055,
-                0 8px 15px rgba(255, 0, 110, 0.4);
+                0 4px 0 #a3425c,
+                0 8px 15px rgba(200, 82, 109, 0.25);
         }
         
         .preset-buttons button:nth-child(even) {
-            background: #8338ec;
-            border-color: #9c4dff;
+            background: #7d5fb8;
+            border-color: #8c6ec4;
             color: #ffffff;
             box-shadow: 
-                0 4px 0 #662dbc,
-                0 8px 15px rgba(131, 56, 236, 0.4);
+                0 4px 0 #6a4c96,
+                0 8px 15px rgba(125, 95, 184, 0.25);
         }
         
         .preset-buttons button:nth-child(3n) {
-            background: #3a86ff;
-            border-color: #4dabf7;
+            background: #5b8fd8;
+            border-color: #6b9ddb;
             color: #ffffff;
             box-shadow: 
-                0 4px 0 #2e6bcc,
-                0 8px 15px rgba(58, 134, 255, 0.4);
+                0 4px 0 #4a76b0,
+                0 8px 15px rgba(91, 143, 216, 0.25);
         }
         
         .preset-buttons button:nth-child(4n) {
-            background: #06ffa5;
-            border-color: #00ff00;
+            background: #5fbfa3;
+            border-color: #7fb069;
             color: #000000;
             box-shadow: 
-                0 4px 0 #00cc82,
-                0 8px 15px rgba(6, 255, 165, 0.4);
+                0 4px 0 #4da382,
+                0 8px 15px rgba(95, 191, 163, 0.25);
         }
         
         .preset-buttons button:nth-child(5n) {
-            background: #ffbe0b;
-            border-color: #ffc107;
+            background: #d2a841;
+            border-color: #d4b246;
             color: #000000;
             box-shadow: 
-                0 4px 0 #cc9808,
-                0 8px 15px rgba(255, 190, 11, 0.4);
+                0 4px 0 #a88735,
+                0 8px 15px rgba(210, 168, 65, 0.25);
         }
         
         /* 同步按钮特殊样式 */
         .sync-button {
-            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
-            border-color: #00ff00 !important;
+            background: linear-gradient(45deg, #c8526d, #7d5fb8) !important;
+            border-color: #7fb069 !important;
             color: #ffffff !important;
             font-weight: 700 !important;
             font-size: 16px !important;
             padding: 15px 30px !important;
             animation: pulse 2s ease-in-out infinite !important;
             box-shadow: 
-                0 4px 0 #662dbc,
-                0 8px 20px rgba(255, 0, 110, 0.6) !important;
+                0 4px 0 #6a4c96,
+                0 8px 20px rgba(200, 82, 109, 0.3) !important;
         }
         
         @keyframes pulse {
@@ -517,13 +520,13 @@
             animation: none !important;
             transform: translateY(-3px) !important;
             box-shadow: 
-                0 7px 0 #662dbc,
-                0 15px 25px rgba(255, 0, 110, 0.8) !important;
+                0 7px 0 #6a4c96,
+                0 15px 25px rgba(200, 82, 109, 0.4) !important;
         }
         
         .population-display {
             background: #000000;
-            border: 3px solid #00ff00;
+            border: 3px solid #7fb069;
             padding: 15px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
@@ -532,10 +535,10 @@
             margin-top: 10px;
             white-space: pre-line;
             line-height: 1.4;
-            color: #00ff00;
+            color: #7fb069;
             box-shadow: 
-                0 0 0 3px #ff006e,
-                inset 0 0 20px rgba(0, 255, 0, 0.1);
+                0 0 0 3px #c8526d,
+                inset 0 0 20px rgba(127, 176, 105, 0.05);
         }
         
         /* 状态消息样式 */
@@ -553,23 +556,23 @@
         
         .sync-status.success, .parse-status.success {
             background: #000000;
-            border-color: #00ff00;
-            color: #00ff00;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            border-color: #7fb069;
+            color: #7fb069;
+            box-shadow: 0 0 20px rgba(127, 176, 105, 0.3);
         }
         
         .sync-status.error, .parse-status.error {
             background: #000000;
-            border-color: #ff006e;
-            color: #ff006e;
-            box-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
+            border-color: #c8526d;
+            color: #c8526d;
+            box-shadow: 0 0 20px rgba(200, 82, 109, 0.3);
         }
         
         .sync-status.info, .parse-status.info {
             background: #000000;
-            border-color: #3a86ff;
-            color: #3a86ff;
-            box-shadow: 0 0 20px rgba(58, 134, 255, 0.5);
+            border-color: #5b8fd8;
+            color: #5b8fd8;
+            box-shadow: 0 0 20px rgba(91, 143, 216, 0.3);
         }
         
         /* 参数输入样式 */
@@ -579,15 +582,15 @@
             padding: 15px;
             margin-bottom: 15px;
             background: #000000;
-            border: 3px solid #8338ec;
-            color: #00ff00;
+            border: 3px solid #7d5fb8;
+            color: #7fb069;
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             line-height: 1.4;
             resize: vertical;
             box-shadow: 
-                0 0 0 3px #ff006e,
-                inset 0 0 20px rgba(131, 56, 236, 0.1);
+                0 0 0 3px #c8526d,
+                inset 0 0 20px rgba(125, 95, 184, 0.05);
         }
         
         .parameter-input::placeholder {
@@ -596,11 +599,11 @@
         
         .parameter-input:focus {
             outline: none;
-            border-color: #00ff00;
+            border-color: #7fb069;
             box-shadow: 
-                0 0 0 3px #ff006e,
-                0 0 30px rgba(0, 255, 0, 0.5),
-                inset 0 0 20px rgba(0, 255, 0, 0.1);
+                0 0 0 3px #c8526d,
+                0 0 30px rgba(127, 176, 105, 0.3),
+                inset 0 0 20px rgba(127, 176, 105, 0.05);
         }
         
         .parameter-controls {
@@ -611,32 +614,177 @@
         }
         
         .parameter-controls button:nth-child(1) {
-            background: #06ffa5;
-            border-color: #00ff00;
+            background: #5fbfa3;
+            border-color: #7fb069;
             color: #000000;
         }
         
         .parameter-controls button:nth-child(2) {
-            background: #ff006e;
-            border-color: #ff1744;
+            background: #c8526d;
+            border-color: #d45675;
             color: #ffffff;
         }
         
+        /* AI Prompt区域样式 */
+        .ai-prompt-section {
+            padding: 20px 0;
+            margin-top: 15px;
+        }
+        
+        .ai-prompt-label {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: #c8526d;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px #000000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .ai-prompt-input-wrapper {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: stretch;
+        }
+        
+        .ai-prompt-input {
+            flex: 1;
+            padding: 15px 20px;
+            background: #1a1a1a;
+            border: 3px solid #7d5fb8;
+            color: #7fb069;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 0;
+            box-shadow: 
+                0 0 0 3px #5b8fd8,
+                inset 0 0 20px rgba(125, 95, 184, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .ai-prompt-input:focus {
+            outline: none;
+            border-color: #5fbfa3;
+            box-shadow: 
+                0 0 0 3px #c8526d,
+                0 0 25px rgba(95, 191, 163, 0.35),
+                inset 0 0 20px rgba(95, 191, 163, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .ai-prompt-input::placeholder {
+            color: #666666;
+            font-style: italic;
+        }
+        
+        .ai-generate-btn {
+            background: linear-gradient(45deg, #c8526d, #7d5fb8, #5b8fd8) !important;
+            border: 3px solid #5fbfa3 !important;
+            color: #ffffff !important;
+            padding: 15px 25px !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: aiGeneratePulse 2s ease-in-out infinite;
+            box-shadow: 
+                0 4px 0 #5e4a7a,
+                0 8px 20px rgba(200, 82, 109, 0.25) !important;
+            min-width: 130px;
+        }
+        
+        .ai-generate-btn:hover {
+            animation: none !important;
+            transform: translateY(-3px) scale(1.05) !important;
+            box-shadow: 
+                0 7px 0 #5e4a7a,
+                0 15px 30px rgba(200, 82, 109, 0.4) !important;
+        }
+        
+        .ai-generate-btn:active {
+            transform: translateY(1px) scale(1.02) !important;
+            box-shadow: 
+                0 3px 0 #5e4a7a,
+                0 6px 15px rgba(200, 82, 109, 0.3) !important;
+        }
+        
+        @keyframes aiGeneratePulse {
+            0%, 100% { 
+                transform: scale(1);
+                background: linear-gradient(45deg, #c8526d, #7d5fb8, #5b8fd8);
+            }
+            50% { 
+                transform: scale(1.02);
+                background: linear-gradient(45deg, #7d5fb8, #5b8fd8, #5fbfa3);
+            }
+        }
+        
+
+        
+        .ai-prompt-status {
+            margin-top: 15px;
+            padding: 12px;
+            border: 3px solid;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .ai-prompt-status.loading {
+            background: #000000;
+            border-color: #5b8fd8;
+            color: #5b8fd8;
+            box-shadow: 0 0 20px rgba(91, 143, 216, 0.3);
+            animation: loadingPulse 1.5s ease-in-out infinite;
+        }
+        
+        .ai-prompt-status.success {
+            background: #000000;
+            border-color: #5fbfa3;
+            color: #5fbfa3;
+            box-shadow: 0 0 20px rgba(95, 191, 163, 0.3);
+        }
+        
+        .ai-prompt-status.error {
+            background: #000000;
+            border-color: #c8526d;
+            color: #c8526d;
+            box-shadow: 0 0 20px rgba(200, 82, 109, 0.3);
+        }
+        
+        @keyframes loadingPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1.0; }
+        }
+
         /* 参数调试器样式 */
         .parameter-debugger {
             background: #000000;
-            border: 3px solid #3a86ff;
+            border: 3px solid #5b8fd8;
             padding: 15px;
             margin-top: 10px;
             box-shadow: 
-                0 0 0 3px #06ffa5,
-                inset 0 0 20px rgba(58, 134, 255, 0.1);
+                0 0 0 3px #5fbfa3,
+                inset 0 0 20px rgba(91, 143, 216, 0.05);
         }
         
         .debugger-subtitle {
             margin: 0 0 20px 0;
             font-size: 16px;
-            color: #3a86ff;
+            color: #5b8fd8;
             font-weight: 600;
             text-align: center;
             text-transform: uppercase;
@@ -654,7 +802,7 @@
         
         .population-selector label {
             font-weight: 700;
-            color: #06ffa5;
+            color: #5fbfa3;
             text-transform: uppercase;
             letter-spacing: 1px;
             text-shadow: 1px 1px 0px #000000;
@@ -662,33 +810,33 @@
         
         .population-selector select {
             background: #000000;
-            border: 3px solid #8338ec;
-            color: #00ff00;
+            border: 3px solid #7d5fb8;
+            color: #7fb069;
             padding: 8px 12px;
             font-size: 14px;
             font-family: 'JetBrains Mono', monospace;
             min-width: 200px;
             box-shadow: 
-                0 0 0 3px #ff006e,
-                0 0 15px rgba(131, 56, 236, 0.3);
+                0 0 0 3px #c8526d,
+                0 0 15px rgba(125, 95, 184, 0.2);
         }
         
         .population-selector select option {
             background: #000000;
-            color: #00ff00;
+            color: #7fb069;
         }
         
         .population-selector select:focus {
             outline: none;
-            border-color: #00ff00;
+            border-color: #7fb069;
             box-shadow: 
-                0 0 0 3px #ff006e,
-                0 0 25px rgba(0, 255, 0, 0.5);
+                0 0 0 3px #c8526d,
+                0 0 25px rgba(127, 176, 105, 0.3);
         }
         
         .population-info {
             font-size: 12px;
-            color: #8338ec;
+            color: #7d5fb8;
             font-family: 'JetBrains Mono', monospace;
             font-weight: 600;
             text-transform: uppercase;
@@ -704,14 +852,14 @@
             flex-direction: column;
             gap: 8px;
             padding: 10px;
-            background: rgba(131, 56, 236, 0.1);
-            border: 2px solid #8338ec;
+            background: rgba(125, 95, 184, 0.05);
+            border: 2px solid #7d5fb8;
         }
         
         .slider-group label {
             font-size: 13px;
             font-weight: 700;
-            color: #06ffa5;
+            color: #5fbfa3;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -726,8 +874,8 @@
             outline: none;
             -webkit-appearance: none;
             appearance: none;
-            border: 2px solid #ff006e;
-            box-shadow: inset 0 0 10px rgba(255, 0, 110, 0.3);
+            border: 2px solid #c8526d;
+            box-shadow: inset 0 0 10px rgba(200, 82, 109, 0.2);
         }
         
         .slider-group input[type="range"]::-webkit-slider-thumb {
@@ -735,34 +883,34 @@
             appearance: none;
             width: 20px;
             height: 20px;
-            background: #00ff00;
+            background: #7fb069;
             cursor: pointer;
             border: 3px solid #ffffff;
             box-shadow: 
                 0 0 0 2px #000000,
-                0 0 15px rgba(0, 255, 0, 0.8);
+                0 0 15px rgba(127, 176, 105, 0.5);
         }
         
         .slider-group input[type="range"]::-webkit-slider-thumb:hover {
-            background: #06ffa5;
+            background: #5fbfa3;
             transform: scale(1.2);
         }
         
         .slider-group input[type="range"]::-moz-range-thumb {
             width: 20px;
             height: 20px;
-            background: #00ff00;
+            background: #7fb069;
             cursor: pointer;
             border: 3px solid #ffffff;
             box-shadow: 
                 0 0 0 2px #000000,
-                0 0 15px rgba(0, 255, 0, 0.8);
+                0 0 15px rgba(127, 176, 105, 0.5);
         }
         
         .slider-value {
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
-            color: #ffbe0b;
+            color: #d2a841;
             font-weight: 700;
             min-width: 60px;
             text-align: right;
@@ -775,12 +923,12 @@
             gap: 15px;
             margin-top: 20px;
             padding-top: 15px;
-            border-top: 2px solid #ff006e;
+            border-top: 2px solid #c8526d;
         }
         
         .debugger-controls button {
-            background: #ffbe0b;
-            border-color: #ffc107;
+            background: #d2a841;
+            border-color: #d4b246;
             color: #000000;
             padding: 12px 25px;
             font-size: 14px;
@@ -856,6 +1004,23 @@
             .step-subtitle {
                 font-size: 15px;
                 line-height: 1.3;
+            }
+            
+            /* AI Prompt区域移动端适配 */
+            .ai-prompt-input-wrapper {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .ai-prompt-input {
+                font-size: 14px;
+                padding: 12px 15px;
+            }
+            
+            .ai-generate-btn {
+                padding: 12px 20px !important;
+                font-size: 14px !important;
+                min-width: auto !important;
             }
         }
         
@@ -980,13 +1145,13 @@
         }
         
         .concept-text-en {
-            border-right: 3px solid #06ffa5;
+            border-right: 3px solid #5fbfa3;
             padding-right: 30px;
             flex: 2;
         }
         
         .concept-text-zh {
-            border-left: 3px solid #ff006e;
+            border-left: 3px solid #c8526d;
             padding-left: 30px;
             flex: 1;
         }
@@ -1000,26 +1165,26 @@
         .concept-lang-label {
             font-size: 14px;
             font-weight: 700;
-            color: #8338ec;
+            color: #7d5fb8;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 20px;
             text-align: center;
             text-shadow: 
                 1px 1px 0px #000000,
-                2px 2px 5px rgba(131, 56, 236, 0.5);
+                2px 2px 5px rgba(125, 95, 184, 0.3);
         }
         
         .concept-text strong {
-            color: #06ffa5;
+            color: #5fbfa3;
             font-weight: 700;
             text-shadow: 
                 1px 1px 0px #000000,
-                2px 2px 8px rgba(6, 255, 165, 0.6);
+                2px 2px 8px rgba(95, 191, 163, 0.35);
         }
         
         .concept-footer {
-            border-top: 3px solid #8338ec;
+            border-top: 3px solid #7d5fb8;
             padding-top: 25px;
             margin-top: 30px;
             position: relative;
@@ -1032,19 +1197,19 @@
             left: 0;
             width: 100%;
             height: 3px;
-            background: linear-gradient(90deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            background: linear-gradient(90deg, #c8526d, #7d5fb8, #5b8fd8, #5fbfa3);
             animation: gradientShift 2s ease infinite;
         }
         
         .concept-footer p {
             font-size: 14px;
-            color: #ff006e;
+            color: #c8526d;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 2px;
             text-shadow: 
                 1px 1px 0px #000000,
-                2px 2px 5px rgba(255, 0, 110, 0.5);
+                2px 2px 5px rgba(200, 82, 109, 0.3);
             animation: pulse 2s ease-in-out infinite;
         }
         
@@ -1057,14 +1222,14 @@
             
             .concept-text-en {
                 border-right: none;
-                border-bottom: 3px solid #06ffa5;
+                border-bottom: 3px solid #5fbfa3;
                 padding-right: 0;
                 padding-bottom: 20px;
             }
             
             .concept-text-zh {
                 border-left: none;
-                border-top: 3px solid #ff006e;
+                border-top: 3px solid #c8526d;
                 padding-left: 0;
                 padding-top: 20px;
             }
@@ -1130,10 +1295,10 @@
             padding-bottom: 56.25%; /* 16:9 宽高比 */
             margin-bottom: 15px;
             overflow: hidden;
-            border: 3px solid #06ffa5;
+            border: 3px solid #5fbfa3;
             box-shadow: 
-                0 0 0 3px #3a86ff,
-                inset 0 0 20px rgba(6, 255, 165, 0.1);
+                0 0 0 3px #5b8fd8,
+                inset 0 0 20px rgba(95, 191, 163, 0.05);
         }
         
         .livestream-wrapper iframe {
@@ -1167,26 +1332,26 @@
         
         .overlay-content {
             text-align: center;
-            color: #00ff00;
+            color: #7fb069;
             font-family: 'JetBrains Mono', monospace;
         }
         
         .overlay-content h4 {
             font-size: 20px;
             margin-bottom: 10px;
-            color: #ff006e;
+            color: #c8526d;
             text-shadow: 2px 2px 0px #000000;
         }
         
         .overlay-content p {
             font-size: 14px;
             margin-bottom: 20px;
-            color: #06ffa5;
+            color: #5fbfa3;
         }
         
         .play-livestream-btn {
-            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
-            border: 3px solid #00ff00 !important;
+            background: linear-gradient(45deg, #c8526d, #7d5fb8) !important;
+            border: 3px solid #7fb069 !important;
             color: #ffffff !important;
             padding: 15px 25px !important;
             font-size: 16px !important;
@@ -1202,8 +1367,8 @@
         .play-livestream-btn:hover {
             transform: translateY(-2px);
             box-shadow: 
-                0 6px 0 #662dbc,
-                0 12px 20px rgba(255, 0, 110, 0.6);
+                0 6px 0 #6a4c96,
+                0 12px 20px rgba(200, 82, 109, 0.35);
             animation: none;
         }
         
@@ -1592,6 +1757,31 @@
                     <h3 class="step-main-title" data-lang-key="step2_caption">2. You are the rule setter, intervening in the laws of natural evolution, giving behavioral meaning to "life".</h3>
                     <p class="step-subtitle" data-lang-key="step2_title">Use the visual controls below to intuitively adjust parameters and fine-tune each population, or manually modify parameter text for precise control.</p>
                     
+                    <!-- AI Prompt可选功能 -->
+                    <div class="ai-optional-section">
+                        <p class="ai-optional-description" data-lang-key="ai_optional_description">(Optional) You can conceptualize the digital life you want to generate. Describe your vision in natural language, and AI will attempt to provide creative inspiration for your digital life creation.</p>
+                        
+                        <div class="ai-prompt-section">
+                            <h4 class="ai-prompt-label" data-lang-key="ai_prompt_label">🌟 Describe Your Vision</h4>
+                            <div class="ai-prompt-input-wrapper">
+                                <input type="text" id="aiPromptInput" class="ai-prompt-input" 
+                                       data-lang-key="ai_prompt_placeholder" 
+                                       placeholder="e.g., a glowing jellyfish, an explosion of joy, flowing like water..." 
+                                       autocomplete="off">
+                                <button onclick="generateFromPrompt()" class="ai-generate-btn" data-lang-key="btn_generate">✨ Generate</button>
+                            </div>
+
+                            <div id="aiPromptStatus" class="ai-prompt-status" style="display: none;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- 分隔线 -->
+                    <div class="section-divider">
+                        <div class="divider-line"></div>
+                        <span class="divider-text" data-lang-key="divider_or">OR</span>
+                        <div class="divider-line"></div>
+                    </div>
+                    
                     <div class="parameter-debugger">
                         <h4 class="debugger-subtitle" data-lang-key="debugger_subtitle">Fine-tune Parameters with Visual Controls</h4>
                         <div class="population-selector">
@@ -1663,13 +1853,6 @@
                         </div>
                     </div>
                     
-                    <!-- 分隔线 -->
-                    <div class="section-divider">
-                        <div class="divider-line"></div>
-                        <span class="divider-text" data-lang-key="divider_or">OR</span>
-                        <div class="divider-line"></div>
-                    </div>
-                    
                     <textarea id="parameterInput" class="parameter-input" data-lang-key="param_placeholder" placeholder="Enter parameter format, example:
 48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)
 152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)
@@ -1691,17 +1874,15 @@
                         <div class="livestream-wrapper" id="livestreamWrapper">
                             <iframe 
                                 id="bilibiliFrame" 
-                                src="https://player.bilibili.com/player.html?isOutside=true&autoplay=0&danmaku=1&high_quality=1&as_wide=1" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                allowfullscreen
-                                title="Bilibili 直播视频"
-                                scrolling="no"
-                                sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts">
+                                src="https://player.livepush.io/live/em2skFpl0x-JHsX3" 
+                                width="640" 
+                                height="480" 
+                                allowFullScreen="1" 
+                                frameBorder="0">
                             </iframe>
                             <div class="livestream-overlay" id="livestreamOverlay">
                                 <div class="overlay-content">
-                                    <h4 data-lang-key="live_title">Bilibili Live</h4>
+                                    <h4 data-lang-key="live_title">Live Stream</h4>
                                     <p data-lang-key="live_description">Click the button below to start watching the live stream</p>
                                     <button onclick="startLivestream()" class="play-livestream-btn" data-lang-key="btn_start_stream">▶️ Start</button>
                                 </div>
@@ -1775,6 +1956,10 @@
                 btn_pause: "Pause", 
                 btn_reset: "Reset",
                 btn_sync: "Sync to the Living World",
+                ai_optional_description: "(Optional) You can conceptualize the digital life you want to generate. Describe your vision in natural language, and AI will attempt to provide creative inspiration for your digital life creation.",
+                ai_prompt_label: "🌟 Describe Your Vision",
+                ai_prompt_placeholder: "e.g., a glowing jellyfish, an explosion of joy, flowing like water...",
+                btn_generate: "✨ Generate",
                 step1_title: "Click the button to try the classic digital life example.",
                 step1_caption: "1. You are the observer, witnessing existing orders.",
                 step2_title: "Use the visual controls below to intuitively adjust parameters and fine-tune each population, or manually modify parameter text for precise control.",
@@ -1826,7 +2011,7 @@
                 btn_create_another: "Create Another",
                 divider_or: "OR",
                 debugger_subtitle: "Fine-tune Parameters with Visual Controls",
-                live_title: "Bilibili Live",
+                live_title: "Live Stream",
                 live_description: "Click the button below to start watching the live stream"
             },
             zh: {
@@ -1836,6 +2021,10 @@
                 btn_pause: "暂停",
                 btn_reset: "重置",
                 btn_sync: "同步到生命世界",
+                ai_optional_description: "（可选）你可以对想要生成的数字生命进行构想，用自然语言描述你的创意愿景，AI将尝试为你的数字生命创作提供灵感启发。",
+                ai_prompt_label: "🌟 描述你的想象",
+                ai_prompt_placeholder: "例如：一朵发光的水母、一阵欢乐的爆发、如水般流动...（支持中英文输入）",
+                btn_generate: "✨ 生成",
                 step1_title: "点击按钮尝试经典的数字生命样例。",
                 step1_caption: "1. 你是观察者，见证既有的秩序。",
                 step2_title: "使用下方可视化控件直观地调整参数并精细调节每个种群，或手动修改参数文本进行精确控制。",
@@ -1887,7 +2076,7 @@
                 btn_create_another: "再创造一个",
                 divider_or: "或者",
                 debugger_subtitle: "使用可视化控件精细调节参数",
-                live_title: "Bilibili 直播",
+                live_title: "在线直播",
                 live_description: "点击下方按钮开始观看直播"
             }
         };
@@ -1905,6 +2094,497 @@
             serverUrl: window.location.origin + '/api',
             enabled: true
         };
+        
+        // AI语义匹配系统
+        class AISemanticMatcher {
+            constructor() {
+                this.model = null;
+                this.promptDatabase = [];
+                this.isLoading = false;
+                this.fallbackEmbeddings = true; // 使用简化的embedding作为fallback
+                this.translationDict = this.initializeTranslationDict();
+            }
+            
+            // 初始化中英文翻译字典
+            initializeTranslationDict() {
+                return {
+                    // 基础形容词
+                    '红色': 'red', '红': 'red', '红的': 'red', '鲜红': 'red', '深红': 'red',
+                    '发光': 'glowing', '发光的': 'glowing', '闪闪发光': 'glowing', '闪亮': 'glowing', 
+                    '光亮': 'glowing', '发亮': 'glowing', '亮闪闪': 'glowing',
+                    '分叉': 'branching', '分叉的': 'branching', '分支': 'branching', '分支的': 'branching',
+                    '分岔': 'branching', '树状': 'branching',
+                    '美丽': 'beautiful', '美丽的': 'beautiful', '漂亮': 'beautiful', '漂亮的': 'beautiful',
+                    '好看': 'beautiful', '优美': 'beautiful',
+                    '明亮': 'bright', '明亮的': 'bright', '亮': 'bright', '亮的': 'bright',
+                    '鲜艳': 'bright', '耀眼': 'bright', '璀璨': 'bright',
+                    '流动': 'flowing', '流动的': 'flowing', '流淌': 'flowing', '流淌的': 'flowing',
+                    '流畅': 'flowing', '流体': 'flowing',
+                    '跳舞': 'dancing', '舞蹈': 'dancing', '跳舞的': 'dancing', '舞动': 'dancing',
+                    '摇摆': 'dancing', '律动': 'dancing',
+                    '爆炸': 'explosion', '爆发': 'explosion', '爆炸的': 'explosion', '爆发的': 'explosion',
+                    '炸裂': 'explosion', '迸发': 'explosion', '突发': 'explosion',
+                    '欢乐': 'joy', '快乐': 'joy', '喜悦': 'joy', '开心': 'joy',
+                    '愉快': 'joy', '高兴': 'joy', '兴奋': 'joy',
+                    '动态': 'dynamic', '动态的': 'dynamic', '活跃': 'dynamic', '活跃的': 'dynamic',
+                    '生动': 'dynamic', '活力': 'dynamic', '有活力': 'dynamic',
+                    '有机': 'organic', '有机的': 'organic', '自然': 'organic', '自然的': 'organic',
+                    '天然': 'organic', '原生': 'organic',
+                    '神经': 'neural', '神经的': 'neural', '神经元': 'neuron', '神经网络': 'neural',
+                    
+                    // 基础名词
+                    '花': 'flower', '花朵': 'flower', '鲜花': 'flower',
+                    '水母': 'jellyfish', '海蜇': 'jellyfish',
+                    '神经元': 'neuron', '神经细胞': 'neuron', '脑细胞': 'neuron',
+                    '粒子': 'particles', '颗粒': 'particles', '微粒': 'particles',
+                    '水': 'water', '液体': 'liquid', '流体': 'fluid',
+                    '光': 'light', '光线': 'light', '光芒': 'light',
+                    '能量': 'energy', '力量': 'energy', '动力': 'energy',
+                    '生命': 'life', '生物': 'life', '生灵': 'life',
+                    '大脑': 'brain', '头脑': 'brain', '脑': 'brain',
+                    '网络': 'network', '网': 'network',
+                    '细胞': 'cell', '细胞群': 'cells',
+                    '星星': 'stars', '恒星': 'stars', '星体': 'stars',
+                    '烟花': 'fireworks', '焰火': 'fireworks',
+                    '云': 'cloud', '云朵': 'cloud', '云彩': 'cloud',
+                    '波浪': 'waves', '波': 'waves', '浪': 'waves',
+                    '螺旋': 'spiral', '漩涡': 'spiral', '旋涡': 'spiral',
+                    '群体': 'swarm', '集群': 'swarm', '群': 'swarm',
+                    
+                    // 动词
+                    '流动': 'flowing', '流': 'flowing', '流淌': 'flowing',
+                    '跳舞': 'dancing', '舞蹈': 'dancing', '摆动': 'swinging',
+                    '旋转': 'rotating', '转动': 'rotating', '转': 'rotating',
+                    '闪烁': 'flickering', '闪': 'flickering', '闪闪': 'flickering',
+                    '移动': 'moving', '运动': 'moving', '游动': 'swimming',
+                    '飞行': 'flying', '飞': 'flying', '飞舞': 'flying',
+                    '聚集': 'gathering', '聚合': 'gathering', '聚拢': 'gathering',
+                    '分散': 'scattering', '散开': 'scattering', '扩散': 'spreading',
+                    '振荡': 'oscillating', '摆动': 'oscillating', '震动': 'vibrating',
+                    '脉动': 'pulsating', '跳动': 'pulsating', '律动': 'pulsating',
+                    
+                    // 常见搭配词组
+                    '像': 'like', '如同': 'like', '好像': 'like', '类似': 'like',
+                    '一个': 'a', '一朵': 'a', '一只': 'a', '一群': 'a',
+                    '的': '', '地': '', '得': '', // 中文助词，翻译时可以忽略
+                    
+                    // 特殊表达
+                    '如水般': 'like water', '像水一样': 'like water',
+                    '如花般': 'like flower', '像花一样': 'like flower',
+                    '星空般': 'like stars', '像星空一样': 'like stars',
+                    '梦幻般': 'dreamy', '梦幻的': 'dreamy',
+                    '魔法般': 'magical', '魔法的': 'magical',
+                    '童话般': 'fairytale', '童话的': 'fairytale'
+                };
+            }
+            
+            // 翻译中文prompt为英文
+            translateChineseToEnglish(chineseText) {
+                if (!chineseText || typeof chineseText !== 'string') {
+                    return chineseText;
+                }
+                
+                // 检测是否包含中文字符
+                const hasChinese = /[\u4e00-\u9fff]/.test(chineseText);
+                if (!hasChinese) {
+                    return chineseText; // 如果没有中文，直接返回
+                }
+                
+                let translatedText = chineseText.toLowerCase();
+                
+                // 首先处理较长的词组，避免被部分匹配覆盖
+                const sortedKeys = Object.keys(this.translationDict).sort((a, b) => b.length - a.length);
+                
+                for (const chineseWord of sortedKeys) {
+                    const englishWord = this.translationDict[chineseWord];
+                    if (englishWord && translatedText.includes(chineseWord)) {
+                        // 使用全局替换
+                        const regex = new RegExp(chineseWord, 'g');
+                        translatedText = translatedText.replace(regex, englishWord);
+                    }
+                }
+                
+                // 清理多余的空格
+                translatedText = translatedText.replace(/\s+/g, ' ').trim();
+                
+                // 如果翻译后还有中文字符，说明有些词没有翻译
+                const stillHasChinese = /[\u4e00-\u9fff]/.test(translatedText);
+                if (stillHasChinese) {
+                    console.log(`⚠️ 部分中文未能翻译: "${chineseText}" -> "${translatedText}"`);
+                    
+                    // 尝试语义推断（简单的关键词匹配）
+                    if (translatedText.includes('花') || translatedText.includes('朵')) {
+                        translatedText += ' flower';
+                    }
+                    if (translatedText.includes('水') || translatedText.includes('液')) {
+                        translatedText += ' water';
+                    }
+                    if (translatedText.includes('光') || translatedText.includes('亮')) {
+                        translatedText += ' light';
+                    }
+                }
+                
+                console.log(`🔤 翻译: "${chineseText}" -> "${translatedText}"`);
+                return translatedText;
+            }
+            
+            // 初始化：加载prompt数据库
+            async initialize() {
+                console.log('🤖 Initializing AI Semantic Matcher...');
+                
+                try {
+                    // 加载prompt数据库
+                    const response = await fetch('public/embeddings_compact.json');
+                    if (response.ok) {
+                        this.promptDatabase = await response.json();
+                        console.log(`📚 Loaded ${this.promptDatabase.length} prompts from database`);
+                    } else {
+                        console.warn('⚠️ Failed to load embeddings, using fallback');
+                        this.loadFallbackData();
+                    }
+                    
+                    // 尝试加载ONNX模型（可选）
+                    await this.loadONNXModel();
+                    
+                } catch (error) {
+                    console.warn('⚠️ AI initialization failed, using fallback:', error);
+                    this.loadFallbackData();
+                }
+                
+                console.log('✅ AI Semantic Matcher ready');
+            }
+            
+            // 加载fallback数据
+            loadFallbackData() {
+                this.promptDatabase = [
+                    {
+                        "prompt": "a red flower",
+                        "embedding": null, // 将使用简化计算
+                        "params": [
+                            "70 * (100.14, 11.41, 20.83, 0.97, 0.15, 10.42, 0.24, 0.94)",
+                            "163 * (279.75, 16.41, 32.35, 0.96, 0.22, 90.17, 0.16, 0.51)",
+                            "161 * (240.26, 18.84, 24.18, 0.51, 0.67, 91.49, 0.21, 0.20)"
+                        ]
+                    },
+                    {
+                        "prompt": "a glowing jellyfish",
+                        "embedding": null,
+                        "params": [
+                            "69 * (206.41, 14.66, 30.80, 0.71, 0.11, 62.76, 0.46, 0.73)",
+                            "195 * (153.73, 11.85, 26.23, 0.82, 0.75, 82.60, 0.30, 0.67)",
+                            "69 * (222.62, 14.14, 28.03, 0.37, 0.55, 65.61, 0.24, 0.79)",
+                            "180 * (236.14, 18.23, 35.16, 0.42, 0.53, 63.33, 0.42, 0.97)"
+                        ]
+                    },
+                    {
+                        "prompt": "a branching neuron",
+                        "embedding": null,
+                        "params": [
+                            "61 * (300.00, 10.00, 29.57, 0.52, 0.69, 90.58, 0.47, 0.56)",
+                            "184 * (217.62, 12.22, 24.21, 0.66, 0.83, 95.68, 0.20, 0.60)",
+                            "76 * (181.22, 17.13, 38.32, 0.69, 0.29, 90.32, 0.18, 0.19)"
+                        ]
+                    }
+                ];
+            }
+            
+            // 尝试加载ONNX模型
+            async loadONNXModel() {
+                try {
+                    if (typeof onnx === 'undefined') {
+                        console.log('📱 ONNX.js not available, using text-based matching');
+                        return;
+                    }
+                    
+                    // 这里可以加载MiniLM的ONNX模型
+                    // 由于模型文件较大，目前使用简化的文本匹配
+                    console.log('🧠 ONNX model loading skipped for now (using text-based matching)');
+                    
+                } catch (error) {
+                    console.warn('⚠️ ONNX model loading failed:', error);
+                }
+            }
+            
+            // 改进的文本特征提取算法
+            extractSimpleFeatures(text) {
+                const features = [];
+                const normalizedText = text.toLowerCase().trim();
+                
+                // 关键词匹配权重 - 直接匹配完整词汇
+                const keywordFeatures = {};
+                const allWords = normalizedText.split(/\s+/);
+                
+                // 为每个数据库中的prompt创建特征词典
+                const promptKeywords = {
+                    'red': 5.0, 'flower': 10.0, 'red flower': 15.0,
+                    'glowing': 5.0, 'jellyfish': 10.0, 'glowing jellyfish': 15.0,
+                    'branching': 5.0, 'neuron': 10.0, 'branching neuron': 15.0,
+                    'dancing': 3.0, 'particles': 3.0, 'dance': 3.0, 'flow': 3.0,
+                    'bright': 2.0, 'light': 2.0, 'glow': 2.0, 'shine': 2.0,
+                    'water': 3.0, 'fluid': 3.0, 'liquid': 3.0, 'flowing': 3.0,
+                    'neural': 4.0, 'brain': 4.0, 'nerve': 4.0, 'synapse': 4.0,
+                    'nature': 2.0, 'organic': 2.0, 'living': 2.0, 'life': 2.0,
+                    'explosion': 3.0, 'burst': 3.0, 'energy': 3.0, 'dynamic': 3.0
+                };
+                
+                // 计算关键词匹配分数
+                let totalKeywordScore = 0;
+                for (const [keyword, weight] of Object.entries(promptKeywords)) {
+                    if (normalizedText.includes(keyword)) {
+                        totalKeywordScore += weight;
+                        // 完整短语匹配给更高分数
+                        if (keyword.includes(' ') && normalizedText.includes(keyword)) {
+                            totalKeywordScore += weight * 0.5; // 额外奖励
+                        }
+                    }
+                }
+                features.push(totalKeywordScore);
+                
+                // 词汇重叠特征 - 计算与已知prompt的词汇重叠度
+                const knownPhrases = ['a red flower', 'a glowing jellyfish', 'a branching neuron'];
+                knownPhrases.forEach(phrase => {
+                    const phraseWords = phrase.toLowerCase().split(/\s+/);
+                    const overlapCount = phraseWords.filter(word => allWords.includes(word)).length;
+                    const overlapRatio = overlapCount / phraseWords.length;
+                    features.push(overlapRatio * 10); // 放大重叠分数
+                });
+                
+                // 文本长度特征
+                features.push(normalizedText.length / 20); // 归一化长度
+                features.push(allWords.length / 5); // 归一化词数
+                
+                // 字符n-gram特征（2-gram和3-gram）
+                const ngramScores = {};
+                const targetNgrams = [
+                    // 从已知prompt提取的重要n-gram
+                    'fl', 'lo', 'ow', 'er', 're', 'ed', // flower, red相关
+                    'gl', 'je', 'el', 'ly', 'fi', 'sh', // jellyfish, glowing相关
+                    'br', 'an', 'ch', 'ne', 'ur', 'on', // branching, neuron相关
+                    'red', 'low', 'ing', 'ell', 'ish', 'ran', 'eur', 'ron' // 3-gram
+                ];
+                
+                targetNgrams.forEach(ngram => {
+                    const count = (normalizedText.match(new RegExp(ngram, 'g')) || []).length;
+                    features.push(count);
+                });
+                
+                // 填充到固定维度
+                while (features.length < 30) {
+                    features.push(0);
+                }
+                
+                return features.slice(0, 30); // 减少维度，专注关键特征
+            }
+            
+            // 余弦相似度计算
+            cosineSimilarity(vec1, vec2) {
+                if (vec1.length !== vec2.length) {
+                    return 0;
+                }
+                
+                let dotProduct = 0;
+                let norm1 = 0;
+                let norm2 = 0;
+                
+                for (let i = 0; i < vec1.length; i++) {
+                    dotProduct += vec1[i] * vec2[i];
+                    norm1 += vec1[i] * vec1[i];
+                    norm2 += vec2[i] * vec2[i];
+                }
+                
+                if (norm1 === 0 || norm2 === 0) {
+                    return 0;
+                }
+                
+                return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
+            }
+            
+            // 简单字符串相似度计算（Levenshtein距离）
+            levenshteinSimilarity(str1, str2) {
+                const matrix = [];
+                const len1 = str1.length;
+                const len2 = str2.length;
+                
+                for (let i = 0; i <= len2; i++) {
+                    matrix[i] = [i];
+                }
+                for (let j = 0; j <= len1; j++) {
+                    matrix[0][j] = j;
+                }
+                
+                for (let i = 1; i <= len2; i++) {
+                    for (let j = 1; j <= len1; j++) {
+                        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                            matrix[i][j] = matrix[i - 1][j - 1];
+                        } else {
+                            matrix[i][j] = Math.min(
+                                matrix[i - 1][j - 1] + 1,
+                                matrix[i][j - 1] + 1,
+                                matrix[i - 1][j] + 1
+                            );
+                        }
+                    }
+                }
+                
+                const maxLen = Math.max(len1, len2);
+                return maxLen === 0 ? 1 : (maxLen - matrix[len2][len1]) / maxLen;
+            }
+            
+            // 综合相似度计算
+            calculateSimilarity(inputPrompt, dbPrompt) {
+                const input = inputPrompt.toLowerCase().trim();
+                const db = dbPrompt.toLowerCase().trim();
+                
+                // 1. 直接字符串匹配
+                if (input === db) return 1.0;
+                
+                // 2. 包含关系匹配
+                if (db.includes(input) || input.includes(db)) {
+                    const includeScore = Math.min(input.length, db.length) / Math.max(input.length, db.length);
+                    return 0.7 + includeScore * 0.3; // 0.7-1.0区间
+                }
+                
+                // 3. 关键词匹配（改进版）
+                const inputWords = input.split(/\s+/);
+                const dbWords = db.split(/\s+/);
+                
+                let keywordMatches = 0;
+                let totalKeywords = 0;
+                let exactMatches = 0;
+                
+                inputWords.forEach(word => {
+                    if (word.length > 1) { // 降低词长要求
+                        totalKeywords++;
+                        // 检查完全匹配
+                        if (dbWords.includes(word)) {
+                            keywordMatches++;
+                            exactMatches++;
+                        } else {
+                            // 检查部分匹配
+                            if (dbWords.some(dbWord => dbWord.includes(word) || word.includes(dbWord))) {
+                                keywordMatches += 0.7; // 部分匹配给较低分数
+                            }
+                        }
+                    }
+                });
+                
+                if (totalKeywords > 0) {
+                    const keywordScore = keywordMatches / totalKeywords;
+                    const exactScore = exactMatches / totalKeywords;
+                    
+                    // 如果有完全匹配的关键词，给更高分数
+                    if (exactScore > 0) {
+                        return 0.5 + (keywordScore * 0.4) + (exactScore * 0.1);
+                    } else if (keywordScore > 0.3) { // 降低阈值
+                        return 0.3 + keywordScore * 0.4; // 0.3-0.7区间
+                    }
+                }
+                
+                // 4. 语义相关性检测（新增）
+                const semanticScore = this.calculateSemanticSimilarity(input, db);
+                if (semanticScore > 0.1) {
+                    return semanticScore;
+                }
+                
+                // 5. 编辑距离相似度
+                const editSimilarity = this.levenshteinSimilarity(input, db);
+                return editSimilarity * 0.3; // 0-0.3区间
+            }
+            
+            // 新增：语义相关性计算
+            calculateSemanticSimilarity(input, db) {
+                // 定义语义相关词组
+                const semanticGroups = [
+                    ['flower', 'bloom', 'petal', 'rose', 'garden', 'plant', 'blossom'],
+                    ['jellyfish', 'ocean', 'sea', 'marine', 'tentacle', 'float', 'swim'],
+                    ['neuron', 'brain', 'neural', 'synapse', 'nerve', 'mind', 'cognitive'],
+                    ['light', 'glow', 'bright', 'shine', 'radiant', 'luminous', 'illuminate'],
+                    ['water', 'flow', 'liquid', 'stream', 'fluid', 'wave', 'current'],
+                    ['dance', 'move', 'motion', 'rhythm', 'swing', 'sway', 'dynamic'],
+                    ['particle', 'dot', 'point', 'element', 'unit', 'piece'],
+                    ['energy', 'power', 'force', 'vibrant', 'active', 'dynamic'],
+                    ['explosion', 'burst', 'blast', 'eruption', 'sudden', 'rapid'],
+                    ['joy', 'happy', 'cheerful', 'bright', 'positive', 'celebration']
+                ];
+                
+                const inputWords = input.split(/\s+/);
+                const dbWords = db.split(/\s+/);
+                
+                let semanticMatches = 0;
+                let totalGroups = 0;
+                
+                semanticGroups.forEach(group => {
+                    const inputInGroup = inputWords.some(word => group.includes(word));
+                    const dbInGroup = dbWords.some(word => group.includes(word));
+                    
+                    if (inputInGroup || dbInGroup) {
+                        totalGroups++;
+                        if (inputInGroup && dbInGroup) {
+                            semanticMatches++;
+                        }
+                    }
+                });
+                
+                return totalGroups > 0 ? (semanticMatches / totalGroups) * 0.4 : 0; // 最高0.4分
+            }
+            
+            // 查找最相似的prompt
+            async findBestMatch(inputPrompt) {
+                if (this.promptDatabase.length === 0) {
+                    throw new Error('Prompt database not loaded');
+                }
+                
+                // 先翻译输入的prompt（如果是中文）
+                const originalPrompt = inputPrompt;
+                const translatedPrompt = this.translateChineseToEnglish(inputPrompt);
+                
+                // 如果翻译了，显示翻译结果
+                if (translatedPrompt !== originalPrompt) {
+                    console.log(`🔤 Input translated: "${originalPrompt}" -> "${translatedPrompt}"`);
+                }
+                
+                let bestMatch = null;
+                let bestScore = -1;
+                const debugResults = [];
+                
+                for (const dbPrompt of this.promptDatabase) {
+                    // 使用翻译后的prompt进行相似度计算
+                    const similarity = this.calculateSimilarity(translatedPrompt, dbPrompt.prompt);
+                    
+                    debugResults.push({
+                        prompt: dbPrompt.prompt,
+                        similarity: similarity
+                    });
+                    
+                    if (similarity > bestScore) {
+                        bestScore = similarity;
+                        bestMatch = {
+                            prompt: dbPrompt.prompt,
+                            params: dbPrompt.params,
+                            similarity: similarity,
+                            originalInput: originalPrompt,
+                            translatedInput: translatedPrompt
+                        };
+                    }
+                }
+                
+                // 调试输出
+                console.log('🔍 Similarity Debug Results for:');
+                console.log(`   Original: "${originalPrompt}"`);
+                if (translatedPrompt !== originalPrompt) {
+                    console.log(`   Translated: "${translatedPrompt}"`);
+                }
+                debugResults.sort((a, b) => b.similarity - a.similarity);
+                debugResults.forEach((result, index) => {
+                    console.log(`${index + 1}. "${result.prompt}": ${(result.similarity * 100).toFixed(1)}%`);
+                });
+                
+                return bestMatch;
+            }
+        }
+        
+        // 全局AI匹配器实例
+        let aiMatcher = null;
         
         // SwarmParameters类 - 与原始版本完全一致
         class SwarmParameters {
@@ -2064,6 +2744,128 @@
             }
         }
         
+        // AI Prompt相关的交互函数
+        
+        // 显示AI状态
+        function showAIStatus(message, type) {
+            const statusDiv = document.getElementById('aiPromptStatus');
+            statusDiv.textContent = message;
+            statusDiv.className = `ai-prompt-status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // 主要的生成函数
+        async function generateFromPrompt() {
+            const input = document.getElementById('aiPromptInput');
+            const promptText = input.value.trim();
+            
+            if (!promptText) {
+                showAIStatus('Please enter a prompt! / 请输入描述！', 'error');
+                return;
+            }
+            
+
+            
+            try {
+                // 确保AI匹配器已初始化
+                if (!aiMatcher) {
+                    aiMatcher = new AISemanticMatcher();
+                    await aiMatcher.initialize();
+                }
+                
+                // 查找最佳匹配
+                const match = await aiMatcher.findBestMatch(promptText);
+                
+                if (match && match.similarity > 0.05) { // 降低相似度阈值到5%
+                    // 直接应用匹配到的参数，不显示匹配信息
+                    await applyMatchedParameters(match.params, promptText);
+                    
+                    console.log(`🎯 Applied parameters from "${match.prompt}" with ${Math.round(match.similarity * 100)}% similarity`);
+                    
+                } else {
+                    // 使用默认的演示参数，但不显示错误信息
+                    console.log(`💡 Using creative default parameters for: "${promptText}"`);
+                    
+                    const defaultParams = [
+                        "50 * (150.0, 12.0, 25.0, 0.5, 0.5, 50.0, 0.1, 0.5)",
+                        "30 * (200.0, 8.0, 20.0, 0.8, 0.3, 30.0, 0.2, 0.7)"
+                    ];
+                    await applyMatchedParameters(defaultParams, promptText);
+                }
+                
+            } catch (error) {
+                console.error('❌ AI generation failed:', error);
+                showAIStatus('❌ Generation failed / ❌ 生成失败', 'error');
+            }
+        }
+        
+        // 应用匹配到的参数
+        async function applyMatchedParameters(paramStrings, originalPrompt) {
+            try {
+                // 清空现有个体
+                individuals = [];
+                
+                // 解析并应用参数
+                const centerX = 600 / 2;
+                const centerY = 600 / 2;
+                const spawnRadius = 80;
+                
+                paramStrings.forEach(paramStr => {
+                    // 解析格式: "count * (param1, param2, ...)"
+                    const match = paramStr.trim().match(/(\d+)\s*\*\s*\(([^)]+)\)/);
+                    if (match) {
+                        const count = parseInt(match[1]);
+                        const params = match[2].split(',').map(p => parseFloat(p.trim()));
+                        
+                        if (params.length === 8) {
+                            const swarmParams = new SwarmParameters(
+                                params[0], params[1], params[2],
+                                params[3], params[4], params[5],
+                                params[6], params[7]
+                            );
+                            
+                            // 生成个体
+                            for (let i = 0; i < count; i++) {
+                                const angle = Math.random() * 2 * Math.PI;
+                                const radius = Math.random() * spawnRadius;
+                                
+                                const x = centerX + Math.cos(angle) * radius;
+                                const y = centerY + Math.sin(angle) * radius;
+                                
+                                const individual = new SwarmIndividual(
+                                    x, y,
+                                    (Math.random() - 0.5) * 2,
+                                    (Math.random() - 0.5) * 2,
+                                    swarmParams
+                                );
+                                individuals.push(individual);
+                            }
+                        }
+                    }
+                });
+                
+                // 更新参数显示
+                updatePopulationDisplay();
+                
+                // 自动开始模拟
+                if (!isRunning) {
+                    startSimulation();
+                }
+                
+                console.log(`🎨 Generated ${individuals.length} particles for "${originalPrompt}"`);
+                
+            } catch (error) {
+                console.error('❌ Failed to apply parameters:', error);
+                throw error;
+            }
+        }
+        
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             canvas = document.getElementById('swarmCanvas');
@@ -2088,6 +2890,27 @@
             setupDialogOverlays(); // 设置对话框叠加层
             initializeSwarm();
             animate();
+            
+            // 初始化AI匹配器（异步）
+            setTimeout(async () => {
+                try {
+                    aiMatcher = new AISemanticMatcher();
+                    await aiMatcher.initialize();
+                    console.log('🤖 AI Semantic Matcher initialized');
+                } catch (error) {
+                    console.warn('⚠️ AI Matcher initialization failed:', error);
+                }
+            }, 1000);
+            
+            // 设置Enter键快捷方式
+            const promptInput = document.getElementById('aiPromptInput');
+            if (promptInput) {
+                promptInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        generateFromPrompt();
+                    }
+                });
+            }
             
             console.log('🎮 SwarmChemistry Cloud Edition initialized');
             console.log('🖼️ Canvas size: 600x600');
@@ -2191,7 +3014,16 @@
             
             // 键盘事件
             document.addEventListener('keydown', (e) => {
-                if (e.key === ' ') {
+                // 检查是否在输入框中
+                const activeElement = document.activeElement;
+                const isInInput = activeElement && (
+                    activeElement.tagName === 'INPUT' || 
+                    activeElement.tagName === 'TEXTAREA' ||
+                    activeElement.contentEditable === 'true'
+                );
+                
+                // 只有不在输入框中时才响应空格键
+                if (e.key === ' ' && !isInInput) {
                     e.preventDefault();
                     togglePlayPause();
                 }
@@ -3189,7 +4021,7 @@
                 <p>Data ID: ${result.dataId}</p>
                 <p>Session: ${swarmData.sessionId}</p>
                 <br>
-                <p style="font-style: italic; color: #8338ec;">
+                <p style="font-style: italic; color: #7d5fb8;">
                     "Your consciousness has been deployed into the living world.<br>
                     It will evolve, interact, and create new possibilities<br>
                     alongside other digital life forms."
@@ -3238,22 +4070,22 @@
         console.log('🌐 SwarmChemistry Cloud Edition loaded');
         console.log('🔗 API endpoint:', SYNC_CONFIG.serverUrl);
         
-        // Bilibili直播控制功能
+        // 直播控制功能
         let isLivestreamPlaying = false;
-        const BILIBILI_LIVE_URL = 'https://b23.tv/gdSGuVK';
+        const LIVE_URL = 'https://player.livepush.io/live/em2skFpl0x-JHsX3';
         
         // 开始观看直播
         function startLivestream() {
             const overlay = document.getElementById('livestreamOverlay');
             const iframe = document.getElementById('bilibiliFrame');
             
-            // 直接设置iframe的src为实际的bilibili直播链接
-            iframe.src = BILIBILI_LIVE_URL;
+            // 直接设置iframe的src为实际的直播链接
+            iframe.src = LIVE_URL;
             
             overlay.classList.add('hidden');
             isLivestreamPlaying = true;
             
-            console.log('🎥 Bilibili直播已开始，链接：', BILIBILI_LIVE_URL);
+            console.log('🎥 直播已开始，链接：', LIVE_URL);
         }
         
         // 添加滑入滑出动画

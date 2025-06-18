@@ -1,0 +1,2612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwarmChemistry - Cloud Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            min-height: 100vh;
+            overflow-x: auto;
+            image-rendering: pixelated;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(120, 255, 198, 0.2) 0%, transparent 50%);
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+            padding: 20px;
+            border: 3px solid #00ff00;
+            border-radius: 0;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                0 0 0 6px #8338ec,
+                0 0 20px rgba(0, 255, 0, 0.5);
+            position: relative;
+        }
+        
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #000000;
+            border: 3px solid #06ffa5;
+            padding: 8px 12px;
+            border-radius: 0;
+            z-index: 100;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                0 0 15px rgba(6, 255, 165, 0.5);
+        }
+        
+        .language-selector select {
+            background: #000000;
+            color: #00ff00;
+            border: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        .language-selector select option {
+            background: #000000;
+            color: #00ff00;
+            padding: 5px;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            color: #ffffff;
+            text-shadow: 
+                2px 2px 0px #000000,
+                4px 4px 0px #ff006e,
+                6px 6px 0px #8338ec;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        
+        .concept-header-btn {
+            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
+            border: 3px solid #00ff00 !important;
+            color: #ffffff !important;
+            padding: 15px 25px !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            text-transform: uppercase !important;
+            letter-spacing: 2px !important;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: conceptHeaderPulse 3s ease-in-out infinite;
+            box-shadow: 
+                0 4px 0 #662dbc,
+                0 8px 15px rgba(255, 0, 110, 0.4) !important;
+        }
+        
+        .concept-header-btn:hover {
+            transform: translateY(-3px) scale(1.05) !important;
+            box-shadow: 
+                0 7px 0 #662dbc,
+                0 15px 25px rgba(255, 0, 110, 0.8) !important;
+            animation: none !important;
+        }
+        
+        .concept-header-btn:active {
+            transform: translateY(1px) scale(1.02) !important;
+            box-shadow: 
+                0 3px 0 #662dbc,
+                0 6px 12px rgba(255, 0, 110, 0.6) !important;
+        }
+        
+        @keyframes conceptHeaderPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 4px 0 #662dbc, 0 8px 15px rgba(255, 0, 110, 0.4);
+            }
+            50% { 
+                transform: scale(1.03);
+                box-shadow: 0 6px 0 #662dbc, 0 12px 20px rgba(255, 0, 110, 0.6);
+            }
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            color: #ffffff;
+            text-shadow: 1px 1px 0px #000000;
+            font-weight: 600;
+        }
+        
+        .main-layout {
+            display: grid;
+            grid-template-columns: 650px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+        
+        .canvas-section {
+            background: #1a1a1a;
+            border: 4px solid #00ff00;
+            padding: 25px;
+            box-shadow: 
+                0 0 0 4px #ff006e,
+                0 0 0 8px #8338ec,
+                0 0 30px rgba(0, 255, 0, 0.3);
+            position: relative;
+        }
+        
+        .canvas-section::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            z-index: -1;
+            border-radius: 0;
+        }
+        
+        .controls-section {
+            background: #1a1a1a;
+            border: 4px solid #ff006e;
+            padding: 25px;
+            box-shadow: 
+                0 0 0 4px #00ff00,
+                0 0 0 8px #8338ec,
+                0 0 30px rgba(255, 0, 110, 0.3);
+            height: 850px;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .controls-section::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: linear-gradient(135deg, #8338ec, #3a86ff, #06ffa5, #ff006e);
+            z-index: -1;
+        }
+        
+        canvas {
+            border: 4px solid #06ffa5;
+            background: #000;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 
+                0 0 0 4px #3a86ff,
+                0 0 20px rgba(6, 255, 165, 0.5),
+                inset 0 0 50px rgba(6, 255, 165, 0.1);
+            image-rendering: pixelated;
+        }
+        
+        .canvas-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #8338ec;
+            position: relative;
+        }
+        
+        .control-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .control-group::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            animation: gradientShift 2s ease infinite;
+        }
+        
+        .control-group h3 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: #06ffa5;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px #000000;
+        }
+        
+        /* 彩色按钮样式 */
+        button {
+            border: 3px solid;
+            color: #000000;
+            padding: 12px 20px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            text-shadow: none;
+        }
+        
+        /* 默认按钮 - 绿色 */
+        button {
+            background: #06ffa5;
+            border-color: #00ff00;
+            box-shadow: 
+                0 4px 0 #00cc82,
+                0 8px 15px rgba(6, 255, 165, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 0 #00cc82,
+                0 12px 20px rgba(6, 255, 165, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 
+                0 2px 0 #00cc82,
+                0 4px 10px rgba(6, 255, 165, 0.4);
+        }
+        
+        /* Canvas控制按钮 - 不同颜色 */
+        .canvas-controls button:nth-child(1) {
+            background: #ff006e;
+            border-color: #ff1744;
+            color: #ffffff;
+            box-shadow: 
+                0 4px 0 #cc0055,
+                0 8px 15px rgba(255, 0, 110, 0.4);
+        }
+        
+        .canvas-controls button:nth-child(1):hover {
+            box-shadow: 
+                0 6px 0 #cc0055,
+                0 12px 20px rgba(255, 0, 110, 0.6);
+        }
+        
+        .canvas-controls button:nth-child(2) {
+            background: #ffbe0b;
+            border-color: #ffc107;
+            color: #000000;
+            box-shadow: 
+                0 4px 0 #cc9808,
+                0 8px 15px rgba(255, 190, 11, 0.4);
+        }
+        
+        .canvas-controls button:nth-child(2):hover {
+            box-shadow: 
+                0 6px 0 #cc9808,
+                0 12px 20px rgba(255, 190, 11, 0.6);
+        }
+        
+        .canvas-controls button:nth-child(3) {
+            background: #3a86ff;
+            border-color: #4dabf7;
+            color: #ffffff;
+            box-shadow: 
+                0 4px 0 #2e6bcc,
+                0 8px 15px rgba(58, 134, 255, 0.4);
+        }
+        
+        .canvas-controls button:nth-child(3):hover {
+            box-shadow: 
+                0 6px 0 #2e6bcc,
+                0 12px 20px rgba(58, 134, 255, 0.6);
+        }
+        
+        .canvas-controls .sync-button {
+            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
+            border-color: #00ff00 !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            font-size: 14px !important;
+            padding: 12px 20px !important;
+            animation: pulse 2s ease-in-out infinite !important;
+            box-shadow: 
+                0 4px 0 #662dbc,
+                0 8px 20px rgba(255, 0, 110, 0.6) !important;
+        }
+        
+        .canvas-controls .sync-button:hover {
+            animation: none !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 
+                0 7px 0 #662dbc,
+                0 15px 25px rgba(255, 0, 110, 0.8) !important;
+        }
+        
+        .canvas-controls .sync-button:active {
+            transform: translateY(2px) !important;
+            box-shadow: 
+                0 2px 0 #662dbc,
+                0 4px 10px rgba(255, 0, 110, 0.4) !important;
+        }
+        
+        /* 预设按钮网格 */
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .preset-buttons button:nth-child(odd) {
+            background: #ff006e;
+            border-color: #ff1744;
+            color: #ffffff;
+            box-shadow: 
+                0 4px 0 #cc0055,
+                0 8px 15px rgba(255, 0, 110, 0.4);
+        }
+        
+        .preset-buttons button:nth-child(even) {
+            background: #8338ec;
+            border-color: #9c4dff;
+            color: #ffffff;
+            box-shadow: 
+                0 4px 0 #662dbc,
+                0 8px 15px rgba(131, 56, 236, 0.4);
+        }
+        
+        .preset-buttons button:nth-child(3n) {
+            background: #3a86ff;
+            border-color: #4dabf7;
+            color: #ffffff;
+            box-shadow: 
+                0 4px 0 #2e6bcc,
+                0 8px 15px rgba(58, 134, 255, 0.4);
+        }
+        
+        .preset-buttons button:nth-child(4n) {
+            background: #06ffa5;
+            border-color: #00ff00;
+            color: #000000;
+            box-shadow: 
+                0 4px 0 #00cc82,
+                0 8px 15px rgba(6, 255, 165, 0.4);
+        }
+        
+        .preset-buttons button:nth-child(5n) {
+            background: #ffbe0b;
+            border-color: #ffc107;
+            color: #000000;
+            box-shadow: 
+                0 4px 0 #cc9808,
+                0 8px 15px rgba(255, 190, 11, 0.4);
+        }
+        
+        /* 同步按钮特殊样式 */
+        .sync-button {
+            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
+            border-color: #00ff00 !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
+            padding: 15px 30px !important;
+            animation: pulse 2s ease-in-out infinite !important;
+            box-shadow: 
+                0 4px 0 #662dbc,
+                0 8px 20px rgba(255, 0, 110, 0.6) !important;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .sync-button:hover {
+            animation: none !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 
+                0 7px 0 #662dbc,
+                0 15px 25px rgba(255, 0, 110, 0.8) !important;
+        }
+        
+        .population-display {
+            background: #000000;
+            border: 3px solid #00ff00;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            max-height: 250px;
+            overflow-y: auto;
+            margin-top: 10px;
+            white-space: pre-line;
+            line-height: 1.4;
+            color: #00ff00;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                inset 0 0 20px rgba(0, 255, 0, 0.1);
+        }
+        
+        /* 状态消息样式 */
+        .sync-status, .parse-status {
+            margin-top: 15px;
+            padding: 12px;
+            border: 3px solid;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .sync-status.success, .parse-status.success {
+            background: #000000;
+            border-color: #00ff00;
+            color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+        
+        .sync-status.error, .parse-status.error {
+            background: #000000;
+            border-color: #ff006e;
+            color: #ff006e;
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
+        }
+        
+        .sync-status.info, .parse-status.info {
+            background: #000000;
+            border-color: #3a86ff;
+            color: #3a86ff;
+            box-shadow: 0 0 20px rgba(58, 134, 255, 0.5);
+        }
+        
+        /* 参数输入样式 */
+        .parameter-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #000000;
+            border: 3px solid #8338ec;
+            color: #00ff00;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            resize: vertical;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                inset 0 0 20px rgba(131, 56, 236, 0.1);
+        }
+        
+        .parameter-input::placeholder {
+            color: #666666;
+        }
+        
+        .parameter-input:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                0 0 30px rgba(0, 255, 0, 0.5),
+                inset 0 0 20px rgba(0, 255, 0, 0.1);
+        }
+        
+        .parameter-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .parameter-controls button:nth-child(1) {
+            background: #06ffa5;
+            border-color: #00ff00;
+            color: #000000;
+        }
+        
+        .parameter-controls button:nth-child(2) {
+            background: #ff006e;
+            border-color: #ff1744;
+            color: #ffffff;
+        }
+        
+        /* 参数调试器样式 */
+        .parameter-debugger {
+            background: #000000;
+            border: 3px solid #3a86ff;
+            padding: 15px;
+            margin-top: 10px;
+            box-shadow: 
+                0 0 0 3px #06ffa5,
+                inset 0 0 20px rgba(58, 134, 255, 0.1);
+        }
+        
+        .population-selector {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .population-selector label {
+            font-weight: 700;
+            color: #06ffa5;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 0px #000000;
+        }
+        
+        .population-selector select {
+            background: #000000;
+            border: 3px solid #8338ec;
+            color: #00ff00;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            min-width: 200px;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                0 0 15px rgba(131, 56, 236, 0.3);
+        }
+        
+        .population-selector select option {
+            background: #000000;
+            color: #00ff00;
+        }
+        
+        .population-selector select:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 
+                0 0 0 3px #ff006e,
+                0 0 25px rgba(0, 255, 0, 0.5);
+        }
+        
+        .population-info {
+            font-size: 12px;
+            color: #8338ec;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .parameter-sliders {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(131, 56, 236, 0.1);
+            border: 2px solid #8338ec;
+        }
+        
+        .slider-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #06ffa5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .slider-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: #000000;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            border: 2px solid #ff006e;
+            box-shadow: inset 0 0 10px rgba(255, 0, 110, 0.3);
+        }
+        
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #00ff00;
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 
+                0 0 0 2px #000000,
+                0 0 15px rgba(0, 255, 0, 0.8);
+        }
+        
+        .slider-group input[type="range"]::-webkit-slider-thumb:hover {
+            background: #06ffa5;
+            transform: scale(1.2);
+        }
+        
+        .slider-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #00ff00;
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 
+                0 0 0 2px #000000,
+                0 0 15px rgba(0, 255, 0, 0.8);
+        }
+        
+        .slider-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #ffbe0b;
+            font-weight: 700;
+            min-width: 60px;
+            text-align: right;
+            text-shadow: 1px 1px 0px #000000;
+        }
+        
+        .debugger-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #ff006e;
+        }
+        
+        .debugger-controls button {
+            background: #ffbe0b;
+            border-color: #ffc107;
+            color: #000000;
+            padding: 12px 25px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 550px 1fr;
+                gap: 20px;
+            }
+            
+            .controls-section {
+                max-height: none;
+            }
+            
+            canvas {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .controls-section {
+                max-height: none;
+            }
+            
+            canvas {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .header-content {
+                gap: 20px;
+            }
+            
+            .concept-header-btn {
+                padding: 12px 20px !important;
+                font-size: 14px !important;
+            }
+            
+            .preset-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            canvas {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .concept-header-btn {
+                padding: 10px 18px !important;
+                font-size: 13px !important;
+                letter-spacing: 1px !important;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #000000;
+            border: 2px solid #8338ec;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #ff006e;
+            border: 2px solid #000000;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ff00;
+        }
+        
+        /* 文字选择样式 */
+        ::selection {
+            background: #ff006e;
+            color: #ffffff;
+        }
+        
+        /* 像素化效果 */
+        .pixel-border {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        /* 概念文字全屏显示样式 */
+        .concept-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.95) 0%, 
+                rgba(131, 56, 236, 0.15) 25%, 
+                rgba(255, 0, 110, 0.1) 50%, 
+                rgba(58, 134, 255, 0.15) 75%, 
+                rgba(0, 0, 0, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
+        }
+        
+        .concept-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .concept-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            text-align: center;
+            pointer-events: none;
+        }
+        
+        .concept-dual-text {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+        
+        .concept-text {
+            font-family: 'JetBrains Mono', 'Georgia', serif;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #ffffff;
+            text-shadow: 
+                1px 1px 0px #000000,
+                2px 2px 5px rgba(0, 255, 0, 0.3);
+            flex: 1;
+        }
+        
+        .concept-text-en {
+            border-right: 3px solid #06ffa5;
+            padding-right: 30px;
+            flex: 2;
+        }
+        
+        .concept-text-zh {
+            border-left: 3px solid #ff006e;
+            padding-left: 30px;
+            flex: 1;
+        }
+        
+        .concept-text p {
+            margin-bottom: 25px;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+        
+        .concept-lang-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #8338ec;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 
+                1px 1px 0px #000000,
+                2px 2px 5px rgba(131, 56, 236, 0.5);
+        }
+        
+        .concept-text strong {
+            color: #06ffa5;
+            font-weight: 700;
+            text-shadow: 
+                1px 1px 0px #000000,
+                2px 2px 8px rgba(6, 255, 165, 0.6);
+        }
+        
+        .concept-footer {
+            border-top: 3px solid #8338ec;
+            padding-top: 25px;
+            margin-top: 30px;
+            position: relative;
+        }
+        
+        .concept-footer::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            animation: gradientShift 2s ease infinite;
+        }
+        
+        .concept-footer p {
+            font-size: 14px;
+            color: #ff006e;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 
+                1px 1px 0px #000000,
+                2px 2px 5px rgba(255, 0, 110, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        /* 响应式设计 - 概念文字 */
+        @media (max-width: 1024px) {
+            .concept-dual-text {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .concept-text-en {
+                border-right: none;
+                border-bottom: 3px solid #06ffa5;
+                padding-right: 0;
+                padding-bottom: 20px;
+            }
+            
+            .concept-text-zh {
+                border-left: none;
+                border-top: 3px solid #ff006e;
+                padding-left: 0;
+                padding-top: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .concept-content {
+                padding: 40px 20px;
+                max-width: 95%;
+            }
+            
+            .concept-text {
+                font-size: 14px;
+                line-height: 1.6;
+            }
+            
+            .concept-footer p {
+                font-size: 12px;
+            }
+            
+            .concept-dual-text {
+                gap: 25px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .concept-content {
+                padding: 30px 15px;
+            }
+            
+            .concept-text {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+            
+            .concept-dual-text {
+                gap: 20px;
+            }
+            
+            .concept-lang-label {
+                font-size: 12px;
+                margin-bottom: 15px;
+            }
+        }
+        
+        
+        .livestream-wrapper {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 宽高比 */
+            margin-bottom: 15px;
+            overflow: hidden;
+            border: 3px solid #06ffa5;
+            box-shadow: 
+                0 0 0 3px #3a86ff,
+                inset 0 0 20px rgba(6, 255, 165, 0.1);
+        }
+        
+        .livestream-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000000;
+        }
+        
+        .livestream-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+        
+        .livestream-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .overlay-content {
+            text-align: center;
+            color: #00ff00;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .overlay-content h4 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #ff006e;
+            text-shadow: 2px 2px 0px #000000;
+        }
+        
+        .overlay-content p {
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: #06ffa5;
+        }
+        
+        .play-livestream-btn {
+            background: linear-gradient(45deg, #ff006e, #8338ec) !important;
+            border: 3px solid #00ff00 !important;
+            color: #ffffff !important;
+            padding: 15px 25px !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            border-radius: 0 !important;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .play-livestream-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 0 #662dbc,
+                0 12px 20px rgba(255, 0, 110, 0.6);
+            animation: none;
+        }
+        
+
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 概念文字全屏显示 -->
+    <div id="conceptOverlay" class="concept-overlay">
+        <div class="concept-content">
+            <div class="concept-dual-text">
+                <!-- 英文版本 -->
+                <div class="concept-text concept-text-en">
+                    <div class="concept-lang-label">English</div>
+                    <p>In contemporary 'post-anthropocentrism' thought, many view humans as the primary destroyers of nature, prompting a deep reflection on the environmental impacts of human activities. However, this critique often becomes extreme, overlooking the unique role and responsibility humans may have in the natural order. Since the Industrial Revolution, issues such as climate change and biodiversity loss have intensified, forcing us to redefine our relationship with nature.</p>
+                    
+                    <p>Yet, <strong>humans are not merely creators of ecological crises—we also have the ability to repair and reshape the world. Human consciousness, as a singular point in natural evolution, possesses the power to predict, create, and reflect.</strong> As philosopher Hans Jonas suggested, technological progress amplifies the impact of human actions, thus increasing our ethical responsibility. We are capable not only of destroying nature but also of creating new orders.</p>
+                    
+                    <p>In this project, you will become a <strong>'rule setter', intervening in the evolution of a complex system to shape a dynamic natural order.</strong> You can design and adjust parameters, placing them within a grand evolutionary landscape, and collaborate with players from around the world to shape the future of ecological order. This is not just a technical computation—it represents how collective consciousness can intervene in the generation of natural order, reminding us that through the fusion of consciousness and technology, we have the power to restore nature and create a new future.</p>
+                </div>
+                
+                <!-- 中文版本 -->
+                <div class="concept-text concept-text-zh">
+                    <div class="concept-lang-label">中文</div>
+                    <p>在当代'去人类中心主义'思潮中，很多人认为人类是自然的破坏者，这促使我们深刻反思人类活动对环境的影响。然而，这种批判往往过于极端，忽视了人类在自然秩序中独特的角色和责任。自工业革命以来，气候变化、生物多样性丧失等问题不断加剧，迫使我们重新定义与自然的关系。</p>
+                    
+                    <p><strong>但人类并非仅是生态危机的制造者，我们同样具备修复和重塑的能力。人类意识作为自然演化中的奇点，具备预测、创造和反思的力量。</strong>正如哲学家汉斯·约纳斯所说，技术的进步扩大了人类行为的影响，也意味着我们肩负更大的伦理责任。我们不仅可以破坏自然，更能创造新秩序。</p>
+                    
+                    <p>在这个项目中，你将成为<strong>'规则设定者'，通过干预复杂系统的演化，塑造一个动态的自然秩序。</strong>你可以设计并调整参数，将其放入一个宏大的演化景观中，与来自世界各地的其他玩家共同塑造未来的生态秩序。这不仅仅是技术的运算，它代表了群体意识如何共同介入自然秩序的生成，让我们重新认识到：通过意识与技术的结合，我们有能力修复自然，创造一个全新的未来。</p>
+                </div>
+            </div>
+            
+            <div class="concept-footer">
+                <p data-lang-key="click_to_continue">点击屏幕任意位置继续 / Click anywhere to continue</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="language-selector">
+                <select id="languageSelect" onchange="switchLanguage(this.value)">
+                    <option value="en">EN</option>
+                    <option value="zh">中文</option>
+                </select>
+            </div>
+            <div class="header-content">
+                <h1 data-lang-key="main_title">Create Your Own Life Rules!</h1>
+                <button onclick="showConcept()" class="concept-header-btn" data-lang-key="concept_btn">Concept</button>
+            </div>
+        </div>
+        
+        <div class="main-layout">
+            <div class="canvas-section">
+                <canvas id="swarmCanvas" width="600" height="600"></canvas>
+                <div class="canvas-controls">
+                    <button onclick="startSimulation()" data-lang-key="btn_start">Start</button>
+                    <button onclick="pauseSimulation()" data-lang-key="btn_pause">Pause</button>
+                    <button onclick="resetView()" data-lang-key="btn_reset">Reset</button>
+                    <button class="sync-button" onclick="syncToUnity()" data-lang-key="btn_sync">Sync to the Living World</button>
+                </div>
+                <div id="syncStatus" class="sync-status" style="display: none;"></div>
+            </div>
+            
+            <div class="controls-section">
+                <div class="control-group">
+                    <h3 data-lang-key="step1_title">1. Click the button to try the classic digital life example.</h3>
+                    <p class="step-caption" data-lang-key="step1_caption">☉ You are the observer, witnessing existing orders.</p>
+                    <div class="preset-buttons">
+                        <button onclick="loadPreset('uzushio')" data-lang-key="preset_uzushio">Uzushio</button>
+                        <button onclick="loadPreset('insurmountable_wall')" data-lang-key="preset_wall">Insurmountable Wall</button>
+                        <button onclick="loadPreset('cell_with_two_nuclei')" data-lang-key="preset_cell">Cell with Two Nuclei</button>
+                        <button onclick="loadPreset('multicellularity')" data-lang-key="preset_multi">Multicellularity</button>
+                        <button onclick="loadPreset('jelly_fish')" data-lang-key="preset_jelly">Jelly Fish</button>
+                        <button onclick="loadPreset('playing_catch')" data-lang-key="preset_catch">Playing Catch</button>
+                        <button onclick="loadPreset('pulsating_eye')" data-lang-key="preset_eye">Pulsating Eye</button>
+                        <button onclick="loadPreset('fast_walker_slow_follower')" data-lang-key="preset_walker">Fast Walker & Slow Follower</button>
+                        <button onclick="loadPreset('swinger')" data-lang-key="preset_swinger">Swinger</button>
+                        <button onclick="loadPreset('rotary')" data-lang-key="preset_rotary">Rotary</button>
+                        <button onclick="loadPreset('wedding_ring')" data-lang-key="preset_ring">Wedding Ring</button>
+                        <button onclick="loadPreset('linear_oscillator')" data-lang-key="preset_oscillator">Linear Oscillator</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3 data-lang-key="step2_title">2. The parameters below represent the underlying rules of the digital life on the left. Manually modify the parameters to create your unique digital life.</h3>
+                    <textarea id="parameterInput" class="parameter-input" data-lang-key="param_placeholder" placeholder="Enter parameter format, example:
+48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)
+152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)
+14 * (248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68)
+31 * (141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2)"></textarea>
+                    <div class="parameter-controls">
+                        <button onclick="parseCustomParameters()" data-lang-key="btn_parse">Parse Parameters</button>
+                        <button onclick="clearParameters()" data-lang-key="btn_clear">Clear Input</button>
+                    </div>
+                    <div id="parseStatus" class="parse-status" style="display: none;"></div>
+                </div>
+                
+                <div class="control-group">
+                    <h3 data-lang-key="step3_title">3. Adjust the progress bar to choose parameters and build your digital life.</h3>
+                    <div class="parameter-debugger">
+                        <div class="population-selector">
+                            <label for="populationSelect" data-lang-key="select_population">Select Population:</label>
+                            <select id="populationSelect" onchange="selectPopulation()">
+                                <option value="" data-lang-key="please_select">Please select population...</option>
+                            </select>
+                            <span id="populationInfo" class="population-info"></span>
+                        </div>
+                        
+                        <div id="parameterSliders" class="parameter-sliders" style="display: none;">
+                            <div class="slider-group">
+                                <label data-lang-key="particle_count">Particle Count:</label>
+                                <input type="range" id="slider_particleCount" min="1" max="500" step="1" oninput="updateParameter('particleCount', this.value)">
+                                <span id="value_particleCount" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="neighborhood_radius">Neighborhood Radius:</label>
+                                <input type="range" id="slider_neighborhoodRadius" min="10" max="400" step="0.1" oninput="updateParameter('neighborhoodRadius', this.value)">
+                                <span id="value_neighborhoodRadius" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="normal_speed">Normal Speed:</label>
+                                <input type="range" id="slider_normalSpeed" min="0" max="25" step="0.01" oninput="updateParameter('normalSpeed', this.value)">
+                                <span id="value_normalSpeed" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="max_speed">Max Speed:</label>
+                                <input type="range" id="slider_maxSpeed" min="0" max="50" step="0.01" oninput="updateParameter('maxSpeed', this.value)">
+                                <span id="value_maxSpeed" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="cohesion_c1">Cohesion C1:</label>
+                                <input type="range" id="slider_c1" min="0" max="1" step="0.01" oninput="updateParameter('c1', this.value)">
+                                <span id="value_c1" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="alignment_c2">Alignment C2:</label>
+                                <input type="range" id="slider_c2" min="0" max="1" step="0.01" oninput="updateParameter('c2', this.value)">
+                                <span id="value_c2" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="separation_c3">Separation C3:</label>
+                                <input type="range" id="slider_c3" min="0" max="100" step="0.01" oninput="updateParameter('c3', this.value)">
+                                <span id="value_c3" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="randomness_c4">Randomness C4:</label>
+                                <input type="range" id="slider_c4" min="0" max="1" step="0.01" oninput="updateParameter('c4', this.value)">
+                                <span id="value_c4" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <label data-lang-key="speed_control_c5">Speed Control C5:</label>
+                                <input type="range" id="slider_c5" min="0" max="1" step="0.01" oninput="updateParameter('c5', this.value)">
+                                <span id="value_c5" class="slider-value">0</span>
+                            </div>
+                            
+                            <div class="debugger-controls">
+                                <button onclick="resetSelectedPopulation()" data-lang-key="btn_reset_params">Reset Parameters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                
+                <div class="control-group">
+                    <h3 data-lang-key="step4_title">4. Ready? Click the "Sync to the Living World" button on the left to upload your created digital life into a larger world!</h3>
+                    <div class="youtube-livestream-container">
+                        <div class="livestream-wrapper" id="livestreamWrapper">
+                            <iframe 
+                                id="youtubeFrame" 
+                                src="https://www.youtube.com/embed/rC_JmB3uaPk?autoplay=0&mute=1&controls=1&showinfo=1&rel=0&modestbranding=1&cc_load_policy=1" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen
+                                title="YouTube 直播视频">
+                            </iframe>
+                            <div class="livestream-overlay" id="livestreamOverlay">
+                                <div class="overlay-content">
+                                    <button onclick="startLivestream()" class="play-livestream-btn" data-lang-key="btn_start_stream">▶️ Start</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SwarmChemistry Cloud Edition - Algorithm implementation consistent with original Java version
+        
+        // 语言系统
+        let currentLanguage = 'en';
+        
+        const translations = {
+            en: {
+                main_title: "Create Your Own Life Rules!",
+                concept_btn: "Concept",
+                btn_start: "Start",
+                btn_pause: "Pause", 
+                btn_reset: "Reset",
+                btn_sync: "Sync to the Living World",
+                step1_title: "1. Click the button to try the classic digital life example.",
+                step2_title: "2. The parameters below represent the underlying rules of the digital life on the left. Manually modify the parameters to create your unique digital life.",
+                step3_title: "3. Adjust the progress bar to choose parameters and build your digital life.",
+                step4_title: "4. Ready? Click the \"Sync to the Living World\" button on the left to upload your created digital life into a larger world!",
+                preset_uzushio: "Uzushio",
+                preset_wall: "Insurmountable Wall",
+                preset_cell: "Cell with Two Nuclei",
+                preset_multi: "Multicellularity",
+                preset_jelly: "Jelly Fish",
+                preset_catch: "Playing Catch",
+                preset_eye: "Pulsating Eye",
+                preset_walker: "Fast Walker & Slow Follower",
+                preset_swinger: "Swinger",
+                preset_rotary: "Rotary",
+                preset_ring: "Wedding Ring",
+                preset_oscillator: "Linear Oscillator",
+                param_placeholder: "Enter parameter format, example:\n48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)\n152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)\n14 * (248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68)\n31 * (141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2)",
+                btn_parse: "Parse Parameters",
+                btn_clear: "Clear Input",
+                select_population: "Select Population:",
+                please_select: "Please select population...",
+                particle_count: "Particle Count:",
+                neighborhood_radius: "Neighborhood Radius:",
+                normal_speed: "Normal Speed:",
+                max_speed: "Max Speed:",
+                cohesion_c1: "Cohesion C1:",
+                alignment_c2: "Alignment C2:",
+                separation_c3: "Separation C3:",
+                randomness_c4: "Randomness C4:",
+                speed_control_c5: "Speed Control C5:",
+                btn_reset_params: "Reset Parameters",
+                btn_start_stream: "▶️ Start",
+                click_to_continue: "Click anywhere to continue",
+                concept_p1: "In contemporary 'post-anthropocentrism' thought, many view humans as the primary destroyers of nature, prompting a deep reflection on the environmental impacts of human activities. However, this critique often becomes extreme, overlooking the unique role and responsibility humans may have in the natural order. Since the Industrial Revolution, issues such as climate change and biodiversity loss have intensified, forcing us to redefine our relationship with nature.",
+                concept_p2: "Yet, humans are not merely creators of ecological crises—we also have the ability to repair and reshape the world. Human consciousness, as a singular point in natural evolution, possesses the power to predict, create, and reflect. As philosopher Hans Jonas suggested, technological progress amplifies the impact of human actions, thus increasing our ethical responsibility. We are capable not only of destroying nature but also of creating new orders.",
+                concept_p3: "In this project, you will become a 'rule setter', intervening in the evolution of a complex system to shape a dynamic natural order. You can design and adjust parameters, placing them within a grand evolutionary landscape, and collaborate with players from around the world to shape the future of ecological order. This is not just a technical computation—it represents how collective consciousness can intervene in the generation of natural order, reminding us that through the fusion of consciousness and technology, we have the power to restore nature and create a new future."
+            },
+            zh: {
+                main_title: "创造你的生命规则！",
+                concept_btn: "理念",
+                btn_start: "开始",
+                btn_pause: "暂停",
+                btn_reset: "重置",
+                btn_sync: "同步到生命世界",
+                step1_title: "1. 点击按钮尝试经典的数字生命样例。",
+                step2_title: "2. 下方参数代表左侧数字生命的底层规则。手动修改参数，创造你独特的数字生命。",
+                step3_title: "3. 调整进度条选择参数，构建你的数字生命。",
+                step4_title: "4. 准备好了吗？点击左侧\"同步到生命世界\"按钮，将你创造的数字生命上传到更大的世界中！",
+                preset_uzushio: "漩涡",
+                preset_wall: "不可逾越之壁",
+                preset_cell: "双核细胞",
+                preset_multi: "多细胞性",
+                preset_jelly: "水母",
+                preset_catch: "追逐游戏",
+                preset_eye: "脉动之眼",
+                preset_walker: "快行者慢跟随者",
+                preset_swinger: "摆动者",
+                preset_rotary: "旋转体",
+                preset_ring: "婚戒",
+                preset_oscillator: "线性振荡器",
+                param_placeholder: "输入参数格式，例如：\n48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)\n152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)\n14 * (248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68)\n31 * (141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2)",
+                btn_parse: "解析参数",
+                btn_clear: "清空输入",
+                select_population: "选择种群：",
+                please_select: "请选择种群...",
+                particle_count: "粒子数量：",
+                neighborhood_radius: "邻域半径：",
+                normal_speed: "正常速度：",
+                max_speed: "最大速度：",
+                cohesion_c1: "聚集力 C1：",
+                alignment_c2: "对齐力 C2：",
+                separation_c3: "分离力 C3：",
+                randomness_c4: "随机性 C4：",
+                speed_control_c5: "速度控制 C5：",
+                btn_reset_params: "重置参数",
+                btn_start_stream: "▶️ 开始",
+                click_to_continue: "点击屏幕任意位置继续",
+                concept_p1: "在当代'去人类中心主义'思潮中，很多人认为人类是自然的破坏者，这促使我们深刻反思人类活动对环境的影响。然而，这种批判往往过于极端，忽视了人类在自然秩序中独特的角色和责任。自工业革命以来，气候变化、生物多样性丧失等问题不断加剧，迫使我们重新定义与自然的关系。",
+                concept_p2: "但人类并非仅是生态危机的制造者，我们同样具备修复和重塑的能力。人类意识作为自然演化中的奇点，具备预测、创造和反思的力量。正如哲学家汉斯·约纳斯所说，技术的进步扩大了人类行为的影响，也意味着我们肩负更大的伦理责任。我们不仅可以破坏自然，更能创造新秩序。",
+                concept_p3: "在这个项目中，你将成为'规则设定者'，通过干预复杂系统的演化，塑造一个动态的自然秩序。你可以设计并调整参数，将其放入一个宏大的演化景观中，与来自世界各地的其他玩家共同塑造未来的生态秩序。这不仅仅是技术的运算，它代表了群体意识如何共同介入自然秩序的生成，让我们重新认识到：通过意识与技术的结合，我们有能力修复自然，创造一个全新的未来。"
+            }
+        };
+        
+        // Global variables
+        let canvas, ctx;
+        let individuals = [];
+        let animationId;
+        let isRunning = false;
+        let mouseX = -1, mouseY = -1;
+        let mouseInfluence = false;
+        
+        // 同步配置 - 使用当前域名
+        const SYNC_CONFIG = {
+            serverUrl: window.location.origin + '/api',
+            enabled: true
+        };
+        
+        // SwarmParameters类 - 与原始版本完全一致
+        class SwarmParameters {
+            constructor(neighborhoodRadius = 50, normalSpeed = 2, maxSpeed = 5, 
+                        c1 = 0.5, c2 = 0.5, c3 = 10, c4 = 0.1, c5 = 0.5) {
+                this.neighborhoodRadius = neighborhoodRadius;
+                this.normalSpeed = normalSpeed;
+                this.maxSpeed = maxSpeed;
+                this.c1 = c1; // 聚集力
+                this.c2 = c2; // 对齐力
+                this.c3 = c3; // 分离力
+                this.c4 = c4; // 随机性
+                this.c5 = c5; // 速度调节
+            }
+            
+            // 根据Java版本的颜色计算规则
+            getColor() {
+                // 增强颜色对比度和可见度
+                const r = Math.floor((this.c1 / 1.0) * 255);  // 移除0.8系数，增强亮度
+                const g = Math.floor((this.c2 / 1.0) * 255);  // 移除0.8系数，增强亮度
+                const b = Math.floor((this.c3 / 100.0) * 255); // 移除0.8系数，增强亮度
+                
+                // 确保最小亮度，避免全黑色
+                const minBrightness = 50;
+                const finalR = Math.max(r, minBrightness);
+                const finalG = Math.max(g, minBrightness);
+                const finalB = Math.max(b, minBrightness);
+                
+                return `rgb(${finalR}, ${finalG}, ${finalB})`;
+            }
+            
+            clone() {
+                return new SwarmParameters(
+                    this.neighborhoodRadius, this.normalSpeed, this.maxSpeed,
+                    this.c1, this.c2, this.c3, this.c4, this.c5
+                );
+            }
+            
+            toString() {
+                return `(${this.neighborhoodRadius.toFixed(2)}, ${this.normalSpeed.toFixed(2)}, ${this.maxSpeed.toFixed(2)}, ${this.c1.toFixed(2)}, ${this.c2.toFixed(2)}, ${this.c3.toFixed(2)}, ${this.c4.toFixed(2)}, ${this.c5.toFixed(2)})`;
+            }
+        }
+        
+        // SwarmIndividual类 - 与原始版本完全一致
+        class SwarmIndividual {
+            constructor(x, y, dx = 0, dy = 0, parameters) {
+                this.x = x;
+                this.y = y;
+                this.dx = dx;
+                this.dy = dy;
+                this.dx2 = dx; // 用于速度调节的临时变量
+                this.dy2 = dy;
+                this.parameters = parameters;
+            }
+            
+            // 加速度计算
+            accelerate(ax, ay, maxSpeed) {
+                this.dx2 += ax;
+                this.dy2 += ay;
+                
+                // 限制最大速度
+                const speed = Math.sqrt(this.dx2 * this.dx2 + this.dy2 * this.dy2);
+                if (speed > maxSpeed) {
+                    this.dx2 = (this.dx2 / speed) * maxSpeed;
+                    this.dy2 = (this.dy2 / speed) * maxSpeed;
+                }
+            }
+            
+            // 移动
+            move() {
+                this.dx = this.dx2;
+                this.dy = this.dy2;
+                
+                this.x += this.dx;
+                this.y += this.dy;
+            }
+            
+            // 边界处理
+            wrapAround(width, height) {
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+        }
+        
+        // 概念文字显示控制
+        let isConceptVisible = true; // 页面加载时默认显示
+        
+        // 显示概念文字
+        function showConcept() {
+            const overlay = document.getElementById('conceptOverlay');
+            overlay.classList.remove('hidden');
+            isConceptVisible = true;
+            console.log('📖 Concept overlay shown');
+        }
+        
+        // 隐藏概念文字
+        function hideConcept() {
+            const overlay = document.getElementById('conceptOverlay');
+            overlay.classList.add('hidden');
+            isConceptVisible = false;
+            console.log('📖 Concept overlay hidden');
+        }
+        
+        // 语言切换功能
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('swarm_language', lang);
+            updatePageTexts();
+            console.log(`🌐 Language switched to: ${lang}`);
+        }
+        
+        // 更新页面文本
+        function updatePageTexts() {
+            const elements = document.querySelectorAll('[data-lang-key]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    if (element.tagName === 'TEXTAREA') {
+                        element.placeholder = translations[currentLanguage][key];
+                    } else {
+                        element.textContent = translations[currentLanguage][key];
+                    }
+                }
+            });
+            
+            // 更新种群选择器的选项
+            updatePopulationSelectorText();
+        }
+        
+        // 初始化语言设置
+        function initializeLanguage() {
+            // 从本地存储获取语言设置，默认为英文
+            const savedLanguage = localStorage.getItem('swarm_language') || 'en';
+            currentLanguage = savedLanguage;
+            
+            // 设置语言选择器的值
+            const languageSelect = document.getElementById('languageSelect');
+            if (languageSelect) {
+                languageSelect.value = currentLanguage;
+            }
+            
+            // 更新页面文本
+            updatePageTexts();
+        }
+        
+        // 更新种群选择器文本
+        function updatePopulationSelectorText() {
+            const selector = document.getElementById('populationSelect');
+            if (!selector) return;
+            
+            // 更新默认选项
+            const defaultOption = selector.querySelector('option[value=""]');
+            if (defaultOption && translations[currentLanguage]['please_select']) {
+                defaultOption.textContent = translations[currentLanguage]['please_select'];
+            }
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            canvas = document.getElementById('swarmCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // 设置高DPI支持
+            const dpr = window.devicePixelRatio || 1;
+            const displayWidth = 600;
+            const displayHeight = 600;
+            
+            canvas.width = displayWidth * dpr;
+            canvas.height = displayHeight * dpr;
+            canvas.style.width = displayWidth + 'px';
+            canvas.style.height = displayHeight + 'px';
+            ctx.scale(dpr, dpr);
+            
+            // 初始化语言系统
+            initializeLanguage();
+            
+            setupEventListeners();
+            setupConceptOverlay(); // 设置概念文字叠加层
+            initializeSwarm();
+            animate();
+            
+            console.log('🎮 SwarmChemistry Cloud Edition initialized');
+            console.log('🖼️ Canvas size: 600x600');
+            console.log('🌐 Server URL:', SYNC_CONFIG.serverUrl);
+            console.log('🌍 Language:', currentLanguage);
+        });
+        
+        // 概念文字叠加层设置
+        function setupConceptOverlay() {
+            const overlay = document.getElementById('conceptOverlay');
+            
+            // 页面加载时显示概念文字
+            showConcept();
+            
+            // 点击叠加层任意位置关闭
+            overlay.addEventListener('click', (e) => {
+                if (isConceptVisible) {
+                    hideConcept();
+                }
+            });
+            
+            // 防止内容区域点击事件冒泡
+            const content = overlay.querySelector('.concept-content');
+            if (content) {
+                content.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+            
+            // ESC键关闭概念文字
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && isConceptVisible) {
+                    hideConcept();
+                }
+            });
+        }
+        
+        // 事件监听器设置
+        function setupEventListeners() {
+            // 鼠标事件
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouseX = e.clientX - rect.left;
+                mouseY = e.clientY - rect.top;
+            });
+            
+            canvas.addEventListener('mouseenter', () => {
+                mouseInfluence = true;
+            });
+            
+            canvas.addEventListener('mouseleave', () => {
+                mouseInfluence = false;
+            });
+            
+            // 键盘事件
+            document.addEventListener('keydown', (e) => {
+                if (e.key === ' ') {
+                    e.preventDefault();
+                    togglePlayPause();
+                }
+            });
+        }
+        
+        // 种群初始化 - 与原始版本完全一致
+        function initializeSwarm() {
+            individuals = [];
+            
+            // 创建多个不同参数的种群 - 使用原始默认参数
+            const populations = [
+                { count: 49, params: new SwarmParameters(184.07, 12.64, 38.49, 0.67, 0.31, 63.78, 0.11, 0.21) },
+                { count: 67, params: new SwarmParameters(177.92, 15.66, 11.05, 0.85, 0.41, 51.77, 0.09, 0.86) },
+                { count: 58, params: new SwarmParameters(177.92, 15.66, 11.05, 0.85, 0.41, 51.77, 0.03, 0.86) },
+                { count: 10, params: new SwarmParameters(298.48, 0.65, 19.27, 0.84, 0.11, 83.18, 0.24, 0.5) },
+                { count: 37, params: new SwarmParameters(81.6, 18.34, 27.3, 0.94, 0.17, 3.41, 0.2, 0.9) },
+                { count: 1, params: new SwarmParameters(274.4, 3.33, 7.42, 0.9, 0.19, 7.37, 0.43, 0.17) },
+                { count: 12, params: new SwarmParameters(203.64, 3.33, 7.42, 0.9, 0.19, 7.37, 0.43, 0.17) }
+            ];
+            
+            // 计算画布中心点 - 适应新尺寸
+            const centerX = 600 / 2;
+            const centerY = 600 / 2;
+            const spawnRadius = 80; // 稍微增大生成半径
+            
+            populations.forEach(pop => {
+                for (let i = 0; i < pop.count; i++) {
+                    // 在圆形区域内随机生成位置
+                    const angle = Math.random() * 2 * Math.PI;
+                    const radius = Math.random() * spawnRadius;
+                    
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius;
+                    
+                    const individual = new SwarmIndividual(
+                        x, y,
+                        (Math.random() - 0.5) * 2, // 初始速度
+                        (Math.random() - 0.5) * 2,
+                        pop.params.clone()
+                    );
+                    individuals.push(individual);
+                }
+            });
+            
+            updatePopulationDisplay();
+        }
+        
+        // 核心群体行为算法 - 与Java版本完全一致
+        function simulateSwarmBehavior() {
+            const mouseAgent = mouseInfluence ? {
+                x: mouseX,
+                y: mouseY,
+                dx: 0,
+                dy: 0
+            } : null;
+            
+            individuals.forEach(individual => {
+                const neighbors = findNeighbors(individual, mouseAgent);
+                const params = individual.parameters;
+                
+                let ax = 0, ay = 0;
+                
+                if (neighbors.length === 0) {
+                    // 无邻居时随机移动 - 与Java版本一致
+                    ax = Math.random() - 0.5;
+                    ay = Math.random() - 0.5;
+                } else {
+                    // 计算邻居中心和平均速度
+                    let centerX = 0, centerY = 0;
+                    let avgDx = 0, avgDy = 0;
+                    
+                    neighbors.forEach(neighbor => {
+                        centerX += neighbor.x;
+                        centerY += neighbor.y;
+                        avgDx += neighbor.dx || 0;
+                        avgDy += neighbor.dy || 0;
+                    });
+                    
+                    centerX /= neighbors.length;
+                    centerY /= neighbors.length;
+                    avgDx /= neighbors.length;
+                    avgDy /= neighbors.length;
+                    
+                    // c1: 聚集行为 - 与Java版本完全一致
+                    ax += (centerX - individual.x) * params.c1;
+                    ay += (centerY - individual.y) * params.c1;
+                    
+                    // c2: 对齐行为 - 与Java版本完全一致
+                    ax += (avgDx - individual.dx) * params.c2;
+                    ay += (avgDy - individual.dy) * params.c2;
+                    
+                    // c3: 分离行为 - 与Java版本完全一致
+                    neighbors.forEach(neighbor => {
+                        const dx = individual.x - neighbor.x;
+                        const dy = individual.y - neighbor.y;
+                        let distSq = dx * dx + dy * dy;
+                        
+                        if (distSq === 0) distSq = 0.001; // 与Java版本一致的处理
+                        ax += (dx / distSq) * params.c3;
+                        ay += (dy / distSq) * params.c3;
+                    });
+                    
+                    // c4: 随机性 - 与Java版本完全一致
+                    if (Math.random() < params.c4) {
+                        ax += Math.random() * 10 - 5;
+                        ay += Math.random() * 10 - 5;
+                    }
+                }
+                
+                // 使用原始最大速度参数
+                individual.accelerate(ax, ay, params.maxSpeed);
+                
+                // c5: 速度调节 - 与Java版本完全一致
+                const currentSpeed = Math.sqrt(individual.dx2 * individual.dx2 + individual.dy2 * individual.dy2);
+                if (currentSpeed === 0) {
+                    // 避免除零错误
+                    individual.accelerate(0, 0, params.maxSpeed);
+                } else {
+                    const speedDiff = params.normalSpeed - currentSpeed;
+                    individual.accelerate(
+                        (individual.dx2 / currentSpeed) * speedDiff * params.c5,
+                        (individual.dy2 / currentSpeed) * speedDiff * params.c5,
+                        params.maxSpeed
+                    );
+                }
+            });
+        }
+        
+        // 查找邻居 - 与Java版本完全一致
+        function findNeighbors(individual, mouseAgent = null) {
+            const neighbors = [];
+            const radiusSq = individual.parameters.neighborhoodRadius * individual.parameters.neighborhoodRadius;
+            
+            // 查找其他个体邻居
+            individuals.forEach(other => {
+                if (other !== individual) {
+                    const dx = individual.x - other.x;
+                    const dy = individual.y - other.y;
+                    const distSq = dx * dx + dy * dy;
+                    
+                    if (distSq < radiusSq) {
+                        neighbors.push(other);
+                    }
+                }
+            });
+            
+            // 鼠标影响 - 与Java版本一致的权重
+            if (mouseAgent) {
+                const dx = individual.x - mouseAgent.x;
+                const dy = individual.y - mouseAgent.y;
+                const distSq = dx * dx + dy * dy;
+                
+                if (distSq < radiusSq) {
+                    // Java版本使用weightOfMouseCursor = 20
+                    for (let i = 0; i < 20; i++) {
+                        neighbors.push(mouseAgent);
+                    }
+                }
+            }
+            
+            return neighbors;
+        }
+        
+        // 更新
+        function update() {
+            if (!isRunning) return;
+            
+            simulateSwarmBehavior();
+            
+            individuals.forEach(individual => {
+                individual.move();
+                individual.wrapAround(600, 600); // 使用固定画布尺寸
+            });
+        }
+        
+        // 渲染
+        function render() {
+            // 完全清空画布
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, 600, 600); // 使用固定画布尺寸
+            
+            // 绘制个体
+            individuals.forEach(individual => {
+                const color = individual.parameters.getColor();
+                
+                // 绘制个体
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(individual.x, individual.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 绘制方向指示
+                const speed = Math.sqrt(individual.dx * individual.dx + individual.dy * individual.dy);
+                if (speed > 0.05) {
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(individual.x, individual.y);
+                    ctx.lineTo(
+                        individual.x + (individual.dx / speed) * 6,
+                        individual.y + (individual.dy / speed) * 6
+                    );
+                    ctx.stroke();
+                }
+            });
+            
+            // 绘制鼠标影响范围
+            if (mouseInfluence && mouseX >= 0) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, 50, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+        
+        // 帧率控制变量
+        let targetFPS = 30; // 可调节的目标帧率
+        let lastFrameTime = 0;
+        
+        // 动画循环
+        function animate(currentTime = 0) {
+            // 帧率控制
+            if (currentTime - lastFrameTime >= 1000 / targetFPS) {
+                update();
+                render();
+                lastFrameTime = currentTime;
+            }
+            requestAnimationFrame(animate);
+        }
+        
+        // 参数调试器相关变量
+        let currentPopulations = [];
+        let selectedPopulationIndex = -1;
+        let originalParameters = null;
+        let selectedPopulationIndividuals = []; // 新增：存储选中种群的个体引用
+        
+        // 统计和显示种群信息
+        function updatePopulationDisplay() {
+            const populationStats = new Map();
+            
+            individuals.forEach(individual => {
+                const paramStr = individual.parameters.toString();
+                if (populationStats.has(paramStr)) {
+                    populationStats.set(paramStr, populationStats.get(paramStr) + 1);
+                } else {
+                    populationStats.set(paramStr, 1);
+                }
+            });
+            
+            // 构建参数输入栏的同步文本
+            let parameterText = '';
+            
+            // 更新种群列表用于调试器
+            currentPopulations = [];
+            
+            let index = 1;
+            populationStats.forEach((count, params) => {
+                parameterText += `${count} * ${params}\n`;
+                
+                // 解析参数用于调试器
+                const match = params.match(/\(([^)]+)\)/);
+                if (match) {
+                    const paramValues = match[1].split(',').map(p => parseFloat(p.trim()));
+                    currentPopulations.push({
+                        index: index,
+                        count: count,
+                        paramString: params, // 添加参数字符串用于匹配
+                        parameters: {
+                            neighborhoodRadius: paramValues[0],
+                            normalSpeed: paramValues[1],
+                            maxSpeed: paramValues[2],
+                            c1: paramValues[3],
+                            c2: paramValues[4],
+                            c3: paramValues[5],
+                            c4: paramValues[6],
+                            c5: paramValues[7]
+                        }
+                    });
+                }
+                index++;
+            });
+            
+            // 实时同步到参数输入栏（仅在有个体时）
+            const parameterInput = document.getElementById('parameterInput');
+            if (parameterInput && individuals.length > 0) {
+                parameterInput.value = parameterText.trim();
+            }
+            
+            // 更新调试器的种群选择器
+            updatePopulationSelector();
+        }
+        
+        // 更新种群选择器
+        function updatePopulationSelector() {
+            const selector = document.getElementById('populationSelect');
+            if (!selector) return;
+            
+            // 清空现有选项
+            selector.innerHTML = '<option value="">Please select population...</option>';
+            
+            // 添加种群选项
+            currentPopulations.forEach((pop, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `Population ${pop.index} (${pop.count} particles)`;
+                selector.appendChild(option);
+            });
+            
+            // 如果之前有选中的种群，尝试保持选中状态
+            if (selectedPopulationIndex >= 0 && selectedPopulationIndex < currentPopulations.length) {
+                selector.value = selectedPopulationIndex;
+            } else {
+                selectedPopulationIndex = -1;
+                selectedPopulationIndividuals = [];
+                document.getElementById('parameterSliders').style.display = 'none';
+            }
+        }
+        
+        // 选择种群
+        function selectPopulation() {
+            const selector = document.getElementById('populationSelect');
+            const index = parseInt(selector.value);
+            
+            if (isNaN(index) || index < 0 || index >= currentPopulations.length) {
+                selectedPopulationIndex = -1;
+                selectedPopulationIndividuals = [];
+                document.getElementById('parameterSliders').style.display = 'none';
+                document.getElementById('populationInfo').textContent = '';
+                return;
+            }
+            
+            selectedPopulationIndex = index;
+            const population = currentPopulations[index];
+            originalParameters = { ...population.parameters };
+            
+            // 保存原始粒子数
+            if (!population.originalCount) {
+                population.originalCount = population.count;
+            }
+            
+            // 找到属于该种群的所有个体
+            selectedPopulationIndividuals = [];
+            individuals.forEach(individual => {
+                if (individual.parameters.toString() === population.paramString) {
+                    selectedPopulationIndividuals.push(individual);
+                }
+            });
+            
+            // 显示种群信息
+            document.getElementById('populationInfo').textContent = 
+                `${selectedPopulationIndividuals.length} particles`;
+            
+            // 更新滑块值
+            updateSliders(population.parameters);
+            
+            // 显示滑块区域
+            document.getElementById('parameterSliders').style.display = 'block';
+            
+            console.log(`🎯 Selected population ${population.index} with ${selectedPopulationIndividuals.length} particles`);
+        }
+        
+        // 更新滑块显示
+        function updateSliders(params) {
+            // 先设置粒子数
+            const particleCountSlider = document.getElementById('slider_particleCount');
+            const particleCountValue = document.getElementById('value_particleCount');
+            if (particleCountSlider && particleCountValue) {
+                const currentCount = selectedPopulationIndividuals.length;
+                particleCountSlider.value = currentCount;
+                particleCountValue.textContent = currentCount;
+            }
+            
+            const paramNames = ['neighborhoodRadius', 'normalSpeed', 'maxSpeed', 'c1', 'c2', 'c3', 'c4', 'c5'];
+            
+            paramNames.forEach(name => {
+                const slider = document.getElementById(`slider_${name}`);
+                const valueSpan = document.getElementById(`value_${name}`);
+                
+                if (slider && valueSpan) {
+                    slider.value = params[name];
+                    valueSpan.textContent = params[name].toFixed(2);
+                }
+            });
+        }
+        
+        // 更新单个参数
+        function updateParameter(paramName, value) {
+            if (selectedPopulationIndex < 0) return;
+            
+            if (paramName === 'particleCount') {
+                updateParticleCount(parseInt(value));
+                return;
+            }
+            
+            if (selectedPopulationIndividuals.length === 0) return;
+            
+            const numValue = parseFloat(value);
+            const valueSpan = document.getElementById(`value_${paramName}`);
+            if (valueSpan) {
+                valueSpan.textContent = numValue.toFixed(2);
+            }
+            
+            // 更新当前种群参数
+            currentPopulations[selectedPopulationIndex].parameters[paramName] = numValue;
+            
+            // 实时应用到个体
+            applyParameterChanges();
+        }
+        
+        // 更新粒子数量
+        function updateParticleCount(newCount) {
+            if (selectedPopulationIndex < 0 || newCount < 1) return;
+            
+            const valueSpan = document.getElementById('value_particleCount');
+            if (valueSpan) {
+                valueSpan.textContent = newCount;
+            }
+            
+            const currentCount = selectedPopulationIndividuals.length;
+            const population = currentPopulations[selectedPopulationIndex];
+            
+            if (newCount > currentCount) {
+                // 增加粒子
+                const addCount = newCount - currentCount;
+                const centerX = 600 / 2;
+                const centerY = 600 / 2;
+                const spawnRadius = 80;
+                
+                // 获取当前种群的参数
+                const targetParams = population.parameters;
+                const swarmParams = new SwarmParameters(
+                    targetParams.neighborhoodRadius,
+                    targetParams.normalSpeed,
+                    targetParams.maxSpeed,
+                    targetParams.c1,
+                    targetParams.c2,
+                    targetParams.c3,
+                    targetParams.c4,
+                    targetParams.c5
+                );
+                
+                for (let i = 0; i < addCount; i++) {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const radius = Math.random() * spawnRadius;
+                    
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius;
+                    
+                    const newIndividual = new SwarmIndividual(
+                        x, y,
+                        (Math.random() - 0.5) * 2,
+                        (Math.random() - 0.5) * 2,
+                        swarmParams
+                    );
+                    
+                    individuals.push(newIndividual);
+                    selectedPopulationIndividuals.push(newIndividual);
+                }
+                
+                console.log(`➕ Added ${addCount} particles to population ${population.index}`);
+                
+            } else if (newCount < currentCount) {
+                // 减少粒子
+                const removeCount = currentCount - newCount;
+                
+                for (let i = 0; i < removeCount; i++) {
+                    const individualToRemove = selectedPopulationIndividuals.pop();
+                    if (individualToRemove) {
+                        const index = individuals.indexOf(individualToRemove);
+                        if (index > -1) {
+                            individuals.splice(index, 1);
+                        }
+                    }
+                }
+                
+                console.log(`➖ Removed ${removeCount} particles from population ${population.index}`);
+            }
+            
+            // 更新种群计数
+            population.count = newCount;
+            
+            // 更新显示（仅更新参数输入框，不重建种群列表）
+            updateParameterInputOnly();
+            
+            // 更新种群信息显示
+            document.getElementById('populationInfo').textContent = 
+                `${selectedPopulationIndividuals.length} particles`;
+            
+            console.log(`🔢 Updated particle count to ${newCount} for population ${population.index}`);
+        }
+        
+        // 应用参数更改
+        function applyParameterChanges() {
+            if (selectedPopulationIndex < 0 || selectedPopulationIndividuals.length === 0) return;
+            
+            const targetParams = currentPopulations[selectedPopulationIndex].parameters;
+            
+            // 直接更新选中种群的所有个体
+            selectedPopulationIndividuals.forEach(individual => {
+                individual.parameters.neighborhoodRadius = targetParams.neighborhoodRadius;
+                individual.parameters.normalSpeed = targetParams.normalSpeed;
+                individual.parameters.maxSpeed = targetParams.maxSpeed;
+                individual.parameters.c1 = targetParams.c1;
+                individual.parameters.c2 = targetParams.c2;
+                individual.parameters.c3 = targetParams.c3;
+                individual.parameters.c4 = targetParams.c4;
+                individual.parameters.c5 = targetParams.c5;
+                
+                // 强制清除任何可能的颜色缓存
+                if (individual.parameters._cachedColor) {
+                    delete individual.parameters._cachedColor;
+                }
+            });
+            
+            // 更新显示（但不重新构建种群列表，避免循环）
+            updateParameterInputOnly();
+            
+            // 添加颜色调试信息
+            if (selectedPopulationIndividuals.length > 0) {
+                const sampleColor = selectedPopulationIndividuals[0].parameters.getColor();
+                console.log(`🎨 Color updated for ${selectedPopulationIndividuals.length} particles`);
+                console.log(`🎨 New color: ${sampleColor} (c1=${targetParams.c1.toFixed(2)}, c2=${targetParams.c2.toFixed(2)}, c3=${targetParams.c3.toFixed(2)})`);
+            }
+            
+            console.log(`🔧 Applied parameter changes to ${selectedPopulationIndividuals.length} particles`);
+        }
+        
+        // 仅更新参数输入框，不重建种群列表
+        function updateParameterInputOnly() {
+            const populationStats = new Map();
+            
+            individuals.forEach(individual => {
+                const paramStr = individual.parameters.toString();
+                if (populationStats.has(paramStr)) {
+                    populationStats.set(paramStr, populationStats.get(paramStr) + 1);
+                } else {
+                    populationStats.set(paramStr, 1);
+                }
+            });
+            
+            // 构建参数输入栏的同步文本
+            let parameterText = '';
+            
+            let index = 1;
+            populationStats.forEach((count, params) => {
+                parameterText += `${count} * ${params}\n`;
+                index++;
+            });
+            
+            // 实时同步到参数输入栏
+            const parameterInput = document.getElementById('parameterInput');
+            if (parameterInput && individuals.length > 0) {
+                parameterInput.value = parameterText.trim();
+            }
+        }
+        
+        // 重置选中种群参数
+        function resetSelectedPopulation() {
+            if (selectedPopulationIndex < 0 || !originalParameters) return;
+            
+            // 恢复原始参数
+            currentPopulations[selectedPopulationIndex].parameters = { ...originalParameters };
+            
+            // 恢复原始粒子数
+            const population = currentPopulations[selectedPopulationIndex];
+            const originalCount = population.originalCount || population.count;
+            if (originalCount !== selectedPopulationIndividuals.length) {
+                updateParticleCount(originalCount);
+            }
+            
+            // 更新滑块显示
+            updateSliders(originalParameters);
+            
+            // 应用更改（如果还有粒子的话）
+            if (selectedPopulationIndividuals.length > 0) {
+                applyParameterChanges();
+            }
+            
+            console.log(`🔄 Reset parameters and particle count for population ${currentPopulations[selectedPopulationIndex].index}`);
+        }
+        
+        // 预设配置 - 经典SwarmChemistry预设
+        const presets = {
+            uzushio: [
+                { count: 49, params: [184.07, 12.64, 38.49, 0.67, 0.31, 63.78, 0.11, 0.21] },
+                { count: 67, params: [177.92, 15.66, 11.05, 0.85, 0.41, 51.77, 0.09, 0.86] },
+                { count: 58, params: [177.92, 15.66, 11.05, 0.85, 0.41, 51.77, 0.03, 0.86] },
+                { count: 10, params: [298.48, 0.65, 19.27, 0.84, 0.11, 83.18, 0.24, 0.5] },
+                { count: 37, params: [81.6, 18.34, 27.3, 0.94, 0.17, 3.41, 0.2, 0.9] },
+                { count: 1, params: [274.4, 3.33, 7.42, 0.9, 0.19, 7.37, 0.43, 0.17] },
+                { count: 12, params: [203.64, 3.33, 7.42, 0.9, 0.19, 7.37, 0.43, 0.17] }
+            ],
+            insurmountable_wall: [
+                { count: 42, params: [52.57, 9.91, 20.42, 0.32, 0.76, 1.8, 0.01, 0.64] },
+                { count: 25, params: [84.87, 8.82, 24.98, 0.91, 0.44, 40.97, 0.18, 0.6] },
+                { count: 45, params: [220.42, 4.65, 7.53, 0.96, 0.35, 46.18, 0.25, 1.0] },
+                { count: 49, params: [279.64, 10.29, 35.95, 0.37, 0.49, 38.09, 0.32, 0.89] }
+            ],
+            cell_with_two_nuclei: [
+                { count: 41, params: [249.84, 4.85, 28.73, 0.34, 0.45, 14.44, 0.09, 0.82] },
+                { count: 26, params: [277.87, 15.02, 35.48, 0.68, 0.05, 82.96, 0.46, 0.9] },
+                { count: 30, params: [277.87, 15.02, 24.44, 0.68, 0.05, 82.96, 0.43, 0.9] },
+                { count: 28, params: [110.8, 16.12, 38.6, 0.18, 0.34, 14.3, 0.01, 0.01] },
+                { count: 48, params: [83.79, 13.29, 7.54, 0.08, 0.79, 1.07, 0.15, 0.45] },
+                { count: 74, params: [269.64, 6.62, 34.69, 0.36, 0.5, 30.2, 0.03, 0.23] }
+            ],
+            multicellularity: [
+                { count: 99, params: [19.8, 15.73, 2.61, 0.85, 0.64, 10.51, 0.17, 0.06] },
+                { count: 48, params: [300.0, 14.63, 0.0, 0.48, 0.81, 90.27, 0.25, 0.78] },
+                { count: 37, params: [275.18, 16.9, 7.05, 0.48, 0.81, 90.27, 0.17, 0.85] },
+                { count: 8, params: [159.59, 2.09, 24.19, 0.96, 0.59, 76.03, 0.01, 0.07] },
+                { count: 42, params: [73.07, 1.82, 2.36, 0.27, 0.61, 40.55, 0.22, 0.86] }
+            ],
+            jelly_fish: [
+                { count: 134, params: [262.65, 12.01, 25.87, 0.97, 1.0, 56.35, 0.26, 0.61] },
+                { count: 67, params: [288.17, 6.19, 23.37, 0.95, 1.0, 1.31, 0.1, 0.9] },
+                { count: 68, params: [150.5, 12.97, 15.87, 0.46, 0.39, 57.95, 0.17, 0.48] }
+            ],
+            playing_catch: [
+                { count: 76, params: [84.06, 0.09, 9.89, 0.33, 0.32, 15.66, 0.22, 0.68] },
+                { count: 100, params: [158.86, 18.4, 24.98, 0.3, 0.3, 1.72, 0.06, 0.37] }
+            ],
+            pulsating_eye: [
+                { count: 102, params: [293.86, 17.06, 38.3, 0.81, 0.05, 0.83, 0.2, 0.9] },
+                { count: 124, params: [226.18, 19.27, 24.57, 0.95, 0.84, 13.09, 0.07, 0.8] },
+                { count: 74, params: [49.98, 8.44, 4.39, 0.92, 0.14, 96.92, 0.13, 0.51] }
+            ],
+            fast_walker_slow_follower: [
+                { count: 67, params: [216.35, 11.75, 7.7, 0.83, 0.97, 97.31, 0.02, 0.38] },
+                { count: 29, params: [254.64, 7.28, 7.0, 0.95, 0.11, 22.41, 0.43, 0.31] },
+                { count: 13, params: [105.4, 3.55, 5.24, 0.34, 0.18, 23.53, 0.39, 0.24] }
+            ],
+            swinger: [
+                { count: 48, params: [150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13] },
+                { count: 152, params: [217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65] },
+                { count: 14, params: [248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68] },
+                { count: 31, params: [141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2] }
+            ],
+            rotary: [
+                { count: 29, params: [122.13, 19.19, 17.98, 0.65, 0.44, 19.88, 0.46, 0.2] },
+                { count: 51, params: [299.13, 0.79, 38.71, 0.25, 0.18, 86.49, 0.38, 0.43] },
+                { count: 10, params: [252.92, 19.99, 10.21, 0.23, 0.17, 1.22, 0.28, 0.92] }
+            ],
+            wedding_ring: [
+                { count: 24, params: [220.51, 13.88, 3.47, 0.46, 0.38, 6.23, 0.19, 0.68] },
+                { count: 13, params: [64.07, 1.4, 19.7, 0.88, 0.27, 0.36, 0.47, 0.72] },
+                { count: 35, params: [117.53, 7.31, 21.72, 0.3, 0.5, 98.69, 0.03, 0.29] }
+            ],
+            linear_oscillator: [
+                { count: 133, params: [214.41, 17.93, 35.14, 0.64, 0.13, 0.29, 0.08, 0.97] },
+                { count: 24, params: [253.6, 7.19, 15.51, 0.82, 0.33, 32.65, 0.34, 0.56] }
+            ]
+        };
+        
+        // 加载预设
+        function loadPreset(presetName) {
+            if (!presets[presetName]) {
+                console.error('未找到预设:', presetName);
+                return;
+            }
+            
+            individuals = [];
+            const presetData = presets[presetName];
+            
+            // 计算画布中心点 - 适应新尺寸
+            const centerX = 600 / 2;
+            const centerY = 600 / 2;
+            const spawnRadius = 80;
+            
+            presetData.forEach((pop, index) => {
+                const params = new SwarmParameters(
+                    pop.params[0], pop.params[1], pop.params[2],
+                    pop.params[3], pop.params[4], pop.params[5],
+                    pop.params[6], pop.params[7]
+                );
+                
+                // 生成个体
+                for (let i = 0; i < pop.count; i++) {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const radius = Math.random() * spawnRadius;
+                    
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius;
+                    
+                    individuals.push(new SwarmIndividual(
+                        x, y,
+                        (Math.random() - 0.5) * 2,
+                        (Math.random() - 0.5) * 2,
+                        params
+                    ));
+                }
+            });
+            
+            updatePopulationDisplay();
+            
+            if (!isRunning) {
+                startSimulation();
+            }
+            
+            console.log(`🎯 Loaded preset: ${presetName}, Total particles: ${individuals.length}`);
+        }
+        
+        // 控制函数
+        function startSimulation() {
+            isRunning = true;
+        }
+        
+        function pauseSimulation() {
+            isRunning = false;
+        }
+        
+        function clearCanvas() {
+            pauseSimulation();
+            individuals = [];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updatePopulationDisplay();
+        }
+        
+        function resetView() {
+            initializeSwarm();
+        }
+        
+        function togglePlayPause() {
+            if (isRunning) {
+                pauseSimulation();
+            } else {
+                startSimulation();
+            }
+        }
+        
+        // 解析自定义参数
+        function parseCustomParameters() {
+            const input = document.getElementById('parameterInput').value.trim();
+            
+            if (!input) {
+                showParseStatus('Please enter parameters! / 请输入参数！', 'error');
+                return;
+            }
+            
+            showParseStatus('🔍 Parsing parameters... / 正在解析参数...', 'info');
+            
+            try {
+                const lines = input.split('\n').filter(line => line.trim());
+                individuals = [];
+                let totalParsed = 0;
+                
+                // 计算画布中心点
+                const centerX = 600 / 2;
+                const centerY = 600 / 2;
+                const spawnRadius = 80;
+                
+                lines.forEach((line, index) => {
+                    // 匹配格式: count * (param1, param2, param3, param4, param5, param6, param7, param8)
+                    const match = line.trim().match(/(\d+)\s*\*\s*\(([^)]+)\)/);
+                    
+                    if (match) {
+                        const count = parseInt(match[1]);
+                        const params = match[2].split(',').map(p => parseFloat(p.trim()));
+                        
+                        if (params.length === 8 && params.every(p => !isNaN(p))) {
+                            const swarmParams = new SwarmParameters(
+                                params[0], params[1], params[2],
+                                params[3], params[4], params[5],
+                                params[6], params[7]
+                            );
+                            
+                            // 生成个体
+                            for (let i = 0; i < count; i++) {
+                                const angle = Math.random() * 2 * Math.PI;
+                                const radius = Math.random() * spawnRadius;
+                                
+                                const x = centerX + Math.cos(angle) * radius;
+                                const y = centerY + Math.sin(angle) * radius;
+                                
+                                individuals.push(new SwarmIndividual(
+                                    x, y,
+                                    (Math.random() - 0.5) * 2,
+                                    (Math.random() - 0.5) * 2,
+                                    swarmParams
+                                ));
+                            }
+                            
+                            totalParsed += count;
+                        } else {
+                            throw new Error(`Line ${index + 1} parameter format error: requires 8 numeric parameters / 第 ${index + 1} 行参数格式错误：需要8个数值参数`);
+                        }
+                    } else {
+                        throw new Error(`Line ${index + 1} format error: should be "count * (param1, param2, ...param8)" / 第 ${index + 1} 行格式错误：应为 "数量 * (参数1, 参数2, ...参数8)"`);
+                    }
+                });
+                
+                if (individuals.length === 0) {
+                    throw new Error('No valid parameter lines found / 没有找到有效的参数行');
+                }
+                
+                updatePopulationDisplay();
+                
+                // 如果没有运行，开始模拟
+                if (!isRunning) {
+                    startSimulation();
+                }
+                
+                showParseStatus(`✅ Parse successful! Created ${totalParsed} particles`, 'success');
+                console.log(`📝 Custom parameters parsed successfully: ${totalParsed} particles`);
+                
+            } catch (error) {
+                console.error('❌ Parameter parsing failed:', error);
+                showParseStatus(`❌ Parse failed: ${error.message}`, 'error');
+            }
+        }
+        
+        // 清空参数输入
+        function clearParameters() {
+            document.getElementById('parameterInput').value = '';
+            showParseStatus('Input cleared', 'info');
+            setTimeout(() => {
+                document.getElementById('parseStatus').style.display = 'none';
+            }, 2000);
+        }
+        
+        // 显示解析状态
+        function showParseStatus(message, type) {
+            const statusDiv = document.getElementById('parseStatus');
+            statusDiv.textContent = message;
+            statusDiv.className = `parse-status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // 同步到Unity
+        async function syncToUnity() {
+            if (individuals.length === 0) {
+                showSyncStatus('Please select a preset or input parameters first!', 'error');
+                return;
+            }
+            
+            showSyncStatus('🚀 Syncing to Unity...', 'info');
+            
+            try {
+                // 收集种群数据
+                const populationStats = new Map();
+                
+                individuals.forEach(individual => {
+                    const paramStr = individual.parameters.toString();
+                    if (populationStats.has(paramStr)) {
+                        populationStats.set(paramStr, populationStats.get(paramStr) + 1);
+                    } else {
+                        populationStats.set(paramStr, 1);
+                    }
+                });
+                
+                const populations = [];
+                populationStats.forEach((count, paramStr) => {
+                    // 从字符串中解析参数
+                    const match = paramStr.match(/\(([^)]+)\)/);
+                    if (match) {
+                        const params = match[1].split(',').map(p => parseFloat(p.trim()));
+                        populations.push({
+                            count: count,
+                            parameters: {
+                                neighborhoodRadius: params[0],
+                                normalSpeed: params[1],
+                                maxSpeed: params[2],
+                                c1: params[3],
+                                c2: params[4],
+                                c3: params[5],
+                                c4: params[6],
+                                c5: params[7],
+                                color: `rgb(${Math.floor((params[3] / 1.0) * 0.8 * 255)}, ${Math.floor((params[4] / 1.0) * 0.8 * 255)}, ${Math.floor((params[5] / 100.0) * 0.8 * 255)})`
+                            }
+                        });
+                    }
+                });
+                
+                const swarmData = {
+                    sessionId: 'web_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    timestamp: new Date().toISOString(),
+                    populations: populations,
+                    totalIndividuals: individuals.length,
+                    userAgent: navigator.userAgent,
+                    source: 'SwarmChemistry Web Cloud'
+                };
+                
+                console.log('📤 Sending data to server:', swarmData);
+                
+                const response = await fetch(SYNC_CONFIG.serverUrl + '/swarm-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(swarmData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSyncStatus(`✅ Sync successful! Data ID: ${result.dataId}`, 'success');
+                    console.log('✅ Sync successful:', result);
+                } else {
+                    throw new Error(result.message || 'Sync failed');
+                }
+                
+            } catch (error) {
+                console.error('❌ Sync failed:', error);
+                showSyncStatus(`❌ Sync failed: ${error.message}`, 'error');
+            }
+        }
+        
+        // 显示同步状态
+        function showSyncStatus(message, type) {
+            const statusDiv = document.getElementById('syncStatus');
+            statusDiv.textContent = message;
+            statusDiv.className = `sync-status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        console.log('🌐 SwarmChemistry Cloud Edition loaded');
+        console.log('🔗 API endpoint:', SYNC_CONFIG.serverUrl);
+        
+        // YouTube直播控制功能
+        let isLivestreamPlaying = false;
+        
+        // 开始观看直播
+        function startLivestream() {
+            const overlay = document.getElementById('livestreamOverlay');
+            
+            overlay.classList.add('hidden');
+            isLivestreamPlaying = true;
+            
+            console.log('🎥 YouTube直播已开始');
+        }
+        
+        // 添加滑入滑出动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html> 
