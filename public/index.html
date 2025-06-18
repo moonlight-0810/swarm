@@ -934,11 +934,13 @@
                 rgba(0, 0, 0, 0.95) 100%);
             backdrop-filter: blur(10px);
             z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow-y: auto;
             cursor: pointer;
             transition: opacity 0.5s ease;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px 0;
         }
         
         .concept-overlay.hidden {
@@ -952,6 +954,11 @@
             padding: 60px 40px;
             text-align: center;
             pointer-events: none;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .concept-dual-text {
@@ -1064,9 +1071,15 @@
         }
         
         @media (max-width: 768px) {
+            .concept-overlay {
+                padding: 10px 0;
+            }
+            
             .concept-content {
                 padding: 40px 20px;
                 max-width: 95%;
+                min-height: auto;
+                justify-content: flex-start;
             }
             
             .concept-text {
@@ -1084,8 +1097,14 @@
         }
         
         @media (max-width: 480px) {
+            .concept-overlay {
+                padding: 5px 0;
+            }
+            
             .concept-content {
                 padding: 30px 15px;
+                min-height: auto;
+                justify-content: flex-start;
             }
             
             .concept-text {
@@ -1571,24 +1590,7 @@
                 
                 <div class="control-group">
                     <h3 class="step-main-title" data-lang-key="step2_caption">2. You are the rule setter, intervening in the laws of natural evolution, giving behavioral meaning to "life".</h3>
-                    <p class="step-subtitle" data-lang-key="step2_title">The parameters below represent the underlying rules of the digital life on the left. Manually modify the parameters to create your unique digital life, or adjust the progress bar to fine-tune each population.</p>
-                    <textarea id="parameterInput" class="parameter-input" data-lang-key="param_placeholder" placeholder="Enter parameter format, example:
-48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)
-152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)
-14 * (248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68)
-31 * (141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2)"></textarea>
-                    <div class="parameter-controls">
-                        <button onclick="parseCustomParameters()" data-lang-key="btn_parse">Parse Parameters</button>
-                        <button onclick="clearParameters()" data-lang-key="btn_clear">Clear Input</button>
-                    </div>
-                    <div id="parseStatus" class="parse-status" style="display: none;"></div>
-                    
-                    <!-- 分隔线 -->
-                    <div class="section-divider">
-                        <div class="divider-line"></div>
-                        <span class="divider-text" data-lang-key="divider_or">OR</span>
-                        <div class="divider-line"></div>
-                    </div>
+                    <p class="step-subtitle" data-lang-key="step2_title">Use the visual controls below to intuitively adjust parameters and fine-tune each population, or manually modify parameter text for precise control.</p>
                     
                     <div class="parameter-debugger">
                         <h4 class="debugger-subtitle" data-lang-key="debugger_subtitle">Fine-tune Parameters with Visual Controls</h4>
@@ -1660,6 +1662,24 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- 分隔线 -->
+                    <div class="section-divider">
+                        <div class="divider-line"></div>
+                        <span class="divider-text" data-lang-key="divider_or">OR</span>
+                        <div class="divider-line"></div>
+                    </div>
+                    
+                    <textarea id="parameterInput" class="parameter-input" data-lang-key="param_placeholder" placeholder="Enter parameter format, example:
+48 * (150.39, 15.89, 23.54, 0.74, 0.45, 62.65, 0.33, 0.13)
+152 * (217.14, 12.13, 12.42, 0.59, 0.98, 14.06, 0.04, 0.65)
+14 * (248.54, 5.85, 22.26, 0.43, 0.11, 17.14, 0.06, 0.68)
+31 * (141.53, 2.91, 4.86, 0.92, 0.03, 21.87, 0.28, 0.2)"></textarea>
+                    <div class="parameter-controls">
+                        <button onclick="parseCustomParameters()" data-lang-key="btn_parse">Parse Parameters</button>
+                        <button onclick="clearParameters()" data-lang-key="btn_clear">Clear Input</button>
+                    </div>
+                    <div id="parseStatus" class="parse-status" style="display: none;"></div>
                 </div>
                 
 
@@ -1667,18 +1687,22 @@
                 <div class="control-group">
                     <h3 class="step-main-title" data-lang-key="step3_caption">3. You are the constructor, deploying your consciousness into a larger ecosystem.</h3>
                     <p class="step-subtitle" data-lang-key="step3_title">Ready? Click the "Sync to the Living World" button on the left to upload your created digital life into a larger world!</p>
-                    <div class="youtube-livestream-container">
+                    <div class="bilibili-livestream-container">
                         <div class="livestream-wrapper" id="livestreamWrapper">
                             <iframe 
-                                id="youtubeFrame" 
-                                src="https://www.youtube.com/embed/rC_JmB3uaPk?autoplay=0&mute=1&controls=1&showinfo=1&rel=0&modestbranding=1&cc_load_policy=1" 
+                                id="bilibiliFrame" 
+                                src="https://player.bilibili.com/player.html?isOutside=true&autoplay=0&danmaku=1&high_quality=1&as_wide=1" 
                                 frameborder="0" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                                 allowfullscreen
-                                title="YouTube 直播视频">
+                                title="Bilibili 直播视频"
+                                scrolling="no"
+                                sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts">
                             </iframe>
                             <div class="livestream-overlay" id="livestreamOverlay">
                                 <div class="overlay-content">
+                                    <h4 data-lang-key="live_title">Bilibili Live</h4>
+                                    <p data-lang-key="live_description">Click the button below to start watching the live stream</p>
                                     <button onclick="startLivestream()" class="play-livestream-btn" data-lang-key="btn_start_stream">▶️ Start</button>
                                 </div>
                             </div>
@@ -1753,7 +1777,7 @@
                 btn_sync: "Sync to the Living World",
                 step1_title: "Click the button to try the classic digital life example.",
                 step1_caption: "1. You are the observer, witnessing existing orders.",
-                step2_title: "The parameters below represent the underlying rules of the digital life on the left. Manually modify the parameters to create your unique digital life, or adjust the progress bar to fine-tune each population.",
+                step2_title: "Use the visual controls below to intuitively adjust parameters and fine-tune each population, or manually modify parameter text for precise control.",
                 step2_caption: "2. You are the rule setter, intervening in the laws of natural evolution, giving behavioral meaning to \"life\".",
                 step3_title: "Ready? Click the \"Sync to the Living World\" button on the left to upload your created digital life into a larger world!",
                 step3_caption: "3. You are the constructor, deploying your consciousness into a larger ecosystem.",
@@ -1801,7 +1825,9 @@
                 btn_close: "Close",
                 btn_create_another: "Create Another",
                 divider_or: "OR",
-                debugger_subtitle: "Fine-tune Parameters with Visual Controls"
+                debugger_subtitle: "Fine-tune Parameters with Visual Controls",
+                live_title: "Bilibili Live",
+                live_description: "Click the button below to start watching the live stream"
             },
             zh: {
                 main_title: "创造你的生命规则！",
@@ -1812,7 +1838,7 @@
                 btn_sync: "同步到生命世界",
                 step1_title: "点击按钮尝试经典的数字生命样例。",
                 step1_caption: "1. 你是观察者，见证既有的秩序。",
-                step2_title: "下方参数代表左侧数字生命的底层规则。手动修改参数创造你独特的数字生命，或调整进度条精细调节每个种群。",
+                step2_title: "使用下方可视化控件直观地调整参数并精细调节每个种群，或手动修改参数文本进行精确控制。",
                 step2_caption: "2. 你是规则设定者，干预自然演化的法则，赋予\"生命\"行为意义。",
                 step3_title: "准备好了吗？点击左侧\"同步到生命世界\"按钮，将你创造的数字生命上传到更大的世界中！",
                 step3_caption: "3. 你是建构者，将你的意识投放到更大的生态系统中。",
@@ -1860,7 +1886,9 @@
                 btn_close: "关闭",
                 btn_create_another: "再创造一个",
                 divider_or: "或者",
-                debugger_subtitle: "使用可视化控件精细调节参数"
+                debugger_subtitle: "使用可视化控件精细调节参数",
+                live_title: "Bilibili 直播",
+                live_description: "点击下方按钮开始观看直播"
             }
         };
         
@@ -3210,17 +3238,22 @@
         console.log('🌐 SwarmChemistry Cloud Edition loaded');
         console.log('🔗 API endpoint:', SYNC_CONFIG.serverUrl);
         
-        // YouTube直播控制功能
+        // Bilibili直播控制功能
         let isLivestreamPlaying = false;
+        const BILIBILI_LIVE_URL = 'https://b23.tv/gdSGuVK';
         
         // 开始观看直播
         function startLivestream() {
             const overlay = document.getElementById('livestreamOverlay');
+            const iframe = document.getElementById('bilibiliFrame');
+            
+            // 直接设置iframe的src为实际的bilibili直播链接
+            iframe.src = BILIBILI_LIVE_URL;
             
             overlay.classList.add('hidden');
             isLivestreamPlaying = true;
             
-            console.log('🎥 YouTube直播已开始');
+            console.log('🎥 Bilibili直播已开始，链接：', BILIBILI_LIVE_URL);
         }
         
         // 添加滑入滑出动画
